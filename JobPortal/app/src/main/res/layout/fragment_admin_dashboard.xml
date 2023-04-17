@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.AdminDashboardFragment">
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/AdminDashBoardSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:thumb="@drawable/thumb"
+        app:track="@drawable/track"
+        app:showText="true"
+        android:textOn="Placed Applications"
+        android:textOff="All Applications"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp" />
+
+    <FrameLayout
+        android:id="@+id/AdminDashBoardContainer"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

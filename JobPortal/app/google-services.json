@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "109001142688",
+    "project_id": "jobportal-dff0a",
+    "storage_bucket": "jobportal-dff0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109001142688:android:c2daa02dae719d9711b4c5",
+        "android_client_info": {
+          "package_name": "com.dataflair.jobportal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "109001142688-p5lh7k0tk3bci6grh4spi8pl8hbicn0v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbgbzzYZzpAFBGQbx3lKCFuh6XqF_MygE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "109001142688-p5lh7k0tk3bci6grh4spi8pl8hbicn0v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

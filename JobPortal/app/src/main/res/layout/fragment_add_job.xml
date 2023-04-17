@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Fragments.AddJobFragment">
+
+
+    <EditText
+        android:id="@+id/CompanyNameEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Company Name"
+        />
+
+    <EditText
+        android:id="@+id/JobTitleEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Job Title"
+        />
+
+    <EditText
+        android:id="@+id/JobSalaryEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Job Salary"
+        />
+
+    <EditText
+        android:id="@+id/JobStartDateEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Start Date"
+        />
+
+    <EditText
+        android:id="@+id/JobLastDateEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Apply By"
+        />
+
+    <EditText
+        android:id="@+id/TotalOpeningsEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="No of Openings"
+        />
+
+    <EditText
+        android:id="@+id/AboutJobEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ABout the Job"
+        />
+
+    <EditText
+        android:id="@+id/SkillsRequiredEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Skills Required"
+        />
+
+    <EditText
+        android:id="@+id/AddationalInfoEditTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Additional Information"
+        />
+
+    <Button
+        android:id="@+id/AddJobBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Job"
+        android:layout_gravity="center"/>
+
+</LinearLayout>
