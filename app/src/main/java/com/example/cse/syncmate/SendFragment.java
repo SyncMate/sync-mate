@@ -31,7 +31,7 @@ public class SendFragment extends Fragment {
     private Button createFolderBtn;
     private ListView folderListView;
     private List<String> folderNameList;
-    private ArrayAdapter listViewAdapter;
+    private FolderAdapter listViewAdapter;
     private WatchService watchService;
     private ExecutorService executor;
     private String syncMateFolderPath;
@@ -62,7 +62,8 @@ public class SendFragment extends Fragment {
         folderNameList = viewFolders(syncMateFolderPath);
 
         folderListView = view.findViewById(R.id.list);
-        listViewAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, folderNameList);
+
+        listViewAdapter = new FolderAdapter(getContext(), folderNameList, R.drawable.baseline_folder_24, R.drawable.baseline_sync_24);
         folderListView.setAdapter(listViewAdapter);
         folderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
