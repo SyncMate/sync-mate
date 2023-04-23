@@ -2,9 +2,6 @@ package com.example.cse.syncmate;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
+import androidx.fragment.app.Fragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,13 +27,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SendFragment extends Fragment {
-    private Button createFolderBtn;
-    private ListView folderListView;
     private List<String> folderNameList;
     private ArrayAdapter listViewAdapter;
     private WatchService watchService;
-    private ExecutorService executor;
-    private String syncMateFolderPath;
     private Path syncMateDir;
 
     @Override
@@ -43,13 +38,13 @@ public class SendFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_send, container, false);
 
-        syncMateFolderPath = "/storage/emulated/0/Download/SyncMate/";
+        String syncMateFolderPath = "/storage/emulated/0/Download/SyncMate/";
         syncMateDir = new File(syncMateFolderPath).toPath();
 
         // Create SyncMate folder in Download directory
         createSyncMateFolder(syncMateFolderPath);
 
-        createFolderBtn = view.findViewById(R.id.folder_create_button);
+        Button createFolderBtn = view.findViewById(R.id.folder_create_button);
         createFolderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +56,7 @@ public class SendFragment extends Fragment {
         // Display folders in SyncMate folder
         folderNameList = viewFolders(syncMateFolderPath);
 
-        folderListView = view.findViewById(R.id.list);
+        ListView folderListView = view.findViewById(R.id.list);
         listViewAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, folderNameList);
         folderListView.setAdapter(listViewAdapter);
         folderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -71,8 +66,6 @@ public class SendFragment extends Fragment {
                 Log.d("TAG", "A folder");
             }
         });
-
-        /** Display changes in SyncMate Directory in real time */
 
         // Create a WatchService instance to monitor the SyncMate directory for new folders
         try {
@@ -84,7 +77,7 @@ public class SendFragment extends Fragment {
         }
 
         // Start a new thread pool to watch for changes
-        executor = Executors.newFixedThreadPool(3);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
 
         // Create a thread to monitor the WatchService
         executor.execute(new Runnable() {
@@ -108,7 +101,7 @@ public class SendFragment extends Fragment {
                             if (file.isDirectory()) {
                                 folderNameList.add(folderName);
                                 Log.d("Folder created", folderName);
-                                getActivity().runOnUiThread(new Runnable() {
+                                requireActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         listViewAdapter.notifyDataSetChanged();
@@ -119,7 +112,7 @@ public class SendFragment extends Fragment {
                             if (file.isDirectory()) {
                                 folderNameList.remove(folderName);
                                 Log.d("Folder deleted", folderName);
-                                getActivity().runOnUiThread(new Runnable() {
+                                requireActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         listViewAdapter.notifyDataSetChanged();
@@ -132,7 +125,7 @@ public class SendFragment extends Fragment {
                                 if (index != -1) {
                                     folderNameList.set(index, folderName);
                                     Log.d("Folder modified", folderName);
-                                    getActivity().runOnUiThread(new Runnable() {
+                                    requireActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             listViewAdapter.notifyDataSetChanged();
