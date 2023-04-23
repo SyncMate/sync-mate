@@ -4,26 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background"
-    tools:context=".SendFragment">
-
-    <ListView android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:layout_margin="20dp"
-        tools:listitem="@layout/list_item"
-        android:elevation="0pt"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="15sp"
-        android:drawSelectorOnTop="false"/>
+    tools:context=".AddFilesFragment">
 
     <Button
         android:id="@+id/folder_create_button"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="click"
+        android:text="Add"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
