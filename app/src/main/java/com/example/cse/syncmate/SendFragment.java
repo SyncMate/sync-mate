@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +54,9 @@ public class SendFragment extends Fragment {
         createFolderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                FolderCreateFragment folderCreateFragment = new
+//                        FolderCreateFragment();
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.send_frag, folderCreateFragment).commit();
                 Intent i = new Intent(getContext(),FolderCreateActivity.class);
                 startActivity(i);
             }
@@ -109,12 +113,15 @@ public class SendFragment extends Fragment {
                             if (file.isDirectory()) {
                                 folderNameList.add(folderName);
                                 Log.d("Folder created", folderName);
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        listViewAdapter.notifyDataSetChanged();
-                                    }
-                                });
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            listViewAdapter.notifyDataSetChanged();
+                                        }
+                                    });
+                                }
+
                             }
                         } else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
                             if (file.isDirectory()) {
