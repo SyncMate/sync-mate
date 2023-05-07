@@ -25,14 +25,14 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class FolderCreateActivity extends AppCompatActivity {
-
     Button createFolder, selectFolder;
     EditText editFolderName;
-    TextView add_file_text, cancel_text;
+    TextView addFileText, cancelText;
     String createdFolderName;
-    private static final String SYNCMATE_FOLDER_PATH = "/storage/emulated/0/Download/SyncMate";
+    private static final String SYNCMATE_FOLDER_PATH = "/storage/emulated/0/Download/SyncMate/";
+    private static final int REQUEST_CODE_COPY_FILES = 1;
     private static final int REQUEST_CODE_COPY_FOLDER = 2;
-    int requestCode = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,18 +58,17 @@ public class FolderCreateActivity extends AppCompatActivity {
             }
         });
 
-        // Select an existing folder in phone
+        // Select an existing folder
         selectFolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                copyFolders();
+                selectFolders();
             }
         });
     }
 
     private void createFolder(String folderName) {
-        String directoryPath = "/storage/emulated/0/Download/SyncMate/";
-        File folder = new File(directoryPath, folderName);
+        File folder = new File(SYNCMATE_FOLDER_PATH, folderName);
         if (!folder.exists()) {
             boolean success = folder.mkdirs();
             if (success) {
@@ -84,9 +83,9 @@ public class FolderCreateActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_layout);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false);
-        add_file_text = dialog.findViewById(R.id.add_file_text);
-        cancel_text = dialog.findViewById(R.id.cancel_text);
-        add_file_text.setOnClickListener(new View.OnClickListener() {
+        addFileText = dialog.findViewById(R.id.add_file_text);
+        cancelText = dialog.findViewById(R.id.cancel_text);
+        addFileText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -94,7 +93,7 @@ public class FolderCreateActivity extends AppCompatActivity {
 //                finish();
             }
         });
-        cancel_text.setOnClickListener(new View.OnClickListener() {
+        cancelText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -107,16 +106,11 @@ public class FolderCreateActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        String syncMateDirectoryPath = "/storage/emulated/0/Download/SyncMate/";
-
-
-
         if (data == null) {
             return;
         }
-        if (resultCode == RESULT_OK && requestCode == 1) {
-            File createdFolder = new File (syncMateDirectoryPath, createdFolderName);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COPY_FILES) {
+            File createdFolder = new File (SYNCMATE_FOLDER_PATH, createdFolderName);
             if (data.getClipData() != null) {
                 for (int i = 0; i < data.getClipData().getItemCount(); i++) {
                     Uri uri = data.getClipData().getItemAt(i).getUri();
@@ -132,23 +126,23 @@ public class FolderCreateActivity extends AppCompatActivity {
         else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COPY_FOLDER) {
             Uri uri = data.getData();
             DocumentFile pickedDir = DocumentFile.fromTreeUri(this, uri);
-            copyDirectory(pickedDir);
+            if (pickedDir != null) {
+                copyDirectory(pickedDir);
+            }
         }
-
-
     }
 
     private void openFileChooser(){
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(intent, requestCode);
+        startActivityForResult(intent, REQUEST_CODE_COPY_FILES);
     }
 
     @SuppressLint("Range")
     private String getFileName(Uri uri) {
         String result = null;
-        if (uri.getScheme().equals("content")) {
+        if ("content".equals(uri.getScheme())) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             try {
                 if (cursor != null && cursor.moveToFirst()) {
@@ -180,14 +174,12 @@ public class FolderCreateActivity extends AppCompatActivity {
             }
             inputStream.close();
             outputStream.close();
-            Log.v("TAG", "Copy file successful.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Select a folder
-    private void copyFolders() {
+    private void selectFolders() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         startActivityForResult(intent, REQUEST_CODE_COPY_FOLDER);
@@ -202,20 +194,8 @@ public class FolderCreateActivity extends AppCompatActivity {
         }
         for (DocumentFile sourceFile : sourceDirectory.listFiles()) {
             String fileName = sourceFile.getName();
-            DocumentFile destFile = DocumentFile.fromFile(new File(destinationFolder.getPath() + "/" + fileName));
-            try {
-                InputStream inputStream = getContentResolver().openInputStream(sourceFile.getUri());
-                OutputStream outputStream = getContentResolver().openOutputStream(destFile.getUri());
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, len);
-                }
-                inputStream.close();
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Uri sourceUri = sourceFile.getUri();
+            copyFileToFolder(sourceUri,destinationFolder, fileName);
         }
     }
 }

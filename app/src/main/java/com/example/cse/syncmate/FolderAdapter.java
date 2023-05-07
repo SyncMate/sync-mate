@@ -1,6 +1,7 @@
 package com.example.cse.syncmate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,9 @@ public class FolderAdapter extends ArrayAdapter<String> {
         folderName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TAG", "Folder created successfully");
+                Intent intent = new Intent(getContext(), FileListActivity.class);
+                intent.putExtra("fileName", getItem(position));
+                getContext().startActivity(intent);
             }
         });
 
