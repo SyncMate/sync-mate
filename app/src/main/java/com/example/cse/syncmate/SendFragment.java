@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +74,6 @@ public class SendFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 // TODO: view folder content
-                Log.d("TAG", "A folder");
             }
         });
 
