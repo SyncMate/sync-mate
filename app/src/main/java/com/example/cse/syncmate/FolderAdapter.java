@@ -1,6 +1,8 @@
 package com.example.cse.syncmate;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +38,15 @@ public class FolderAdapter extends ArrayAdapter<String> {
 
         TextView folderName = view.findViewById(R.id.folderName);
         folderName.setText(getItem(position));
+
+        folderName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), FileListActivity.class);
+                intent.putExtra("fileName", getItem(position));
+                getContext().startActivity(intent);
+            }
+        });
 
         ImageButton syncImage = view.findViewById(R.id.sync_btn);
         syncImage.setImageResource(iconResource2);
