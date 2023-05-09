@@ -2,6 +2,7 @@ package com.example.cse.syncmate.Send.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +15,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cse.syncmate.Send.FileListActivity;
 import com.example.cse.syncmate.R;
+import com.example.cse.syncmate.Send.SyncFolderActivity;
 import com.example.cse.syncmate.Send.WifiDeviceScanner;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.List;
 
 public class FolderAdapter extends ArrayAdapter<String> {
@@ -63,8 +71,16 @@ public class FolderAdapter extends ArrayAdapter<String> {
                 Log.d("WifiDeviceScanner ELIGIBILE LIST SIZE", String.valueOf(eligibleDevices.size()));
                 Toast.makeText(getContext(), "NO DEVICES FOUND", Toast.LENGTH_SHORT).show();
             } else {
+
                 Log.d("WifiDeviceScanner NO ELIGIBILE LIST", String.valueOf(eligibleDevices.size()) + eligibleDevices);
+                String ipAddress = eligibleDevices.get(0).get(1);
                 Toast.makeText(getContext(), "Eligible devices: " + eligibleDevices, Toast.LENGTH_SHORT).show();
+
+                String path = "/internal storage/MobileTrans/mobiletrans_log/2023-05-07.txt";
+
+//                Intent intent = new Intent(getContext(), SyncFolderActivity.class);
+//                intent.putExtra("ipAddress", ipAddress);
+//                getContext().startActivity(intent);
             }
         });
 
