@@ -6,6 +6,10 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cse.syncmate.History.HistoryFragment;
+import com.example.cse.syncmate.Receive.ReceiveFragment;
+import com.example.cse.syncmate.Send.SendFragment;
+import com.example.cse.syncmate.Settings.SettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity
