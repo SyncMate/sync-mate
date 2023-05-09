@@ -72,8 +72,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
                 Log.d("WifiDeviceScanner SUBNET", subnet);
                 for (int i = 1; i <= 255; i++) {
                     String address = subnet + i;
-                    if (address.equals(accessPointIp)) {
-                        //TODO skip ip of own device
+                    if (address.equals(accessPointIp) || address.equals(ipString)) {
                         continue;
                     }
                     try {
@@ -101,5 +100,8 @@ public class WifiDeviceScanner extends AppCompatActivity {
         return devices;
     }
 
+    // TODO - 1. UI: select device for syncing (Model pop up with available devices)
+    // TODO - 2. Put multi threads on device scanner
+    // TODO - 3. When Wifi disabled while syncing, stop scanning
 }
 

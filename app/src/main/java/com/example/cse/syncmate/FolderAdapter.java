@@ -1,6 +1,8 @@
 package com.example.cse.syncmate;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +51,11 @@ public class FolderAdapter extends ArrayAdapter<String> {
         ImageButton syncImage = view.findViewById(R.id.sync_btn);
         syncImage.setImageResource(iconResource2);
 
+        // Create a dialog builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Select a device");
+        AlertDialog dialog = builder.create();
+
         syncImage.setOnClickListener(view1 -> {
             Log.d("WifiDeviceScanner", "STARTED CLICK METHOD");
             WifiDeviceScanner wifiDeviceScanner = new WifiDeviceScanner(getContext());
@@ -58,9 +65,18 @@ public class FolderAdapter extends ArrayAdapter<String> {
             if (eligibleDevices.isEmpty()) {
                 Log.d("WifiDeviceScanner ELIGIBILE LIST SIZE", String.valueOf(eligibleDevices.size()));
                 Toast.makeText(getContext(), "NO DEVICES FOUND", Toast.LENGTH_SHORT).show();
+
             } else {
                 Log.d("WifiDeviceScanner NO ELIGIBILE LIST", String.valueOf(eligibleDevices.size()) + eligibleDevices);
                 Toast.makeText(getContext(), "Eligible devices: " + eligibleDevices, Toast.LENGTH_SHORT).show();
+
+                dialog.show();
+                // Set the items in the dialog to the list of devices
+                builder.setItems(eligibleDevices.toArray(new String[0]), (dialog1, which) -> {
+                    // Code to handle when an item is clicked
+                    String selectedDeviceName = eligibleDevices.get(which);
+                    Toast.makeText(getContext(), "Selected device: " + selectedDeviceName, Toast.LENGTH_SHORT).show();
+                });
             }
         });
 
