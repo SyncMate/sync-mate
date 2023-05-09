@@ -21,6 +21,7 @@ import com.example.cse.syncmate.Send.FileListActivity;
 import com.example.cse.syncmate.R;
 import com.example.cse.syncmate.Send.WifiDeviceScanner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FolderAdapter extends ArrayAdapter<String> {
@@ -55,11 +56,6 @@ public class FolderAdapter extends ArrayAdapter<String> {
         ImageButton syncImage = view.findViewById(R.id.sync_btn);
         syncImage.setImageResource(iconResource2);
 
-        // Create a dialog builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Select a device");
-        AlertDialog dialog = builder.create();
-
         syncImage.setOnClickListener(view1 -> {
             Log.d("WifiDeviceScanner", "STARTED CLICK METHOD");
             WifiDeviceScanner wifiDeviceScanner = new WifiDeviceScanner(getContext());
@@ -74,13 +70,17 @@ public class FolderAdapter extends ArrayAdapter<String> {
                 Log.d("WifiDeviceScanner NO ELIGIBILE LIST", String.valueOf(eligibleDevices.size()) + eligibleDevices);
                 Toast.makeText(getContext(), "Eligible devices: " + eligibleDevices, Toast.LENGTH_SHORT).show();
 
-                dialog.show();
-                // Set the items in the dialog to the list of devices
-                builder.setItems(eligibleDevices.toArray(new String[0]), (dialog1, which) -> {
-                    // Code to handle when an item is clicked
-                    String selectedDeviceName = eligibleDevices.get(which);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Select a device to sync with");
+                List<String> deviceNames = new ArrayList<>();
+                for (List<String> deviceInfo : eligibleDevices) {
+                    deviceNames.add(deviceInfo.get(0));
+                }
+                builder.setItems(deviceNames.toArray(new String[0]), (dialog, which) -> {
+                    String selectedDeviceName = deviceNames.get(which);
                     Toast.makeText(getContext(), "Selected device: " + selectedDeviceName, Toast.LENGTH_SHORT).show();
                 });
+                builder.create().show();
             }
         });
 
