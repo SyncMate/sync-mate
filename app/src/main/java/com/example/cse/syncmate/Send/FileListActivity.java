@@ -1,4 +1,4 @@
-package com.example.cse.syncmate;
+package com.example.cse.syncmate.Send;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+
+import com.example.cse.syncmate.R;
+import com.example.cse.syncmate.Send.Adapter.FileAdapter;
 
 import java.io.File;
 import java.io.IOException;

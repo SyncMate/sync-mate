@@ -25,10 +25,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SyncMate">
         <activity
-            android:name=".FileListActivity"
+            android:name=".Send.FileListActivity"
             android:exported="false" />
         <activity
-            android:name=".FolderCreateActivity"
+            android:name=".Send.FolderCreateActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

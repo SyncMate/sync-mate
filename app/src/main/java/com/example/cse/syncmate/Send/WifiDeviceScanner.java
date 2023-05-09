@@ -1,4 +1,4 @@
-package com.example.cse.syncmate;
+package com.example.cse.syncmate.Send;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -39,13 +39,14 @@ public class WifiDeviceScanner extends AppCompatActivity {
         }
     }
 
-    public List<String> scanForDevices() {
+    public List<List<String>> scanForDevices() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         Log.d("WifiDeviceScanner", "ENTER TO SCANFORDEVICES METHOD");
-        List<String> devices = new ArrayList<>();
+        List<List<String>> devices = new ArrayList<>();
+        List<String> innerListDevice = new ArrayList<>();
         Log.d("WifiDeviceScanner", "PASSED GET CONTEXT");
         try {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -72,8 +73,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
                 Log.d("WifiDeviceScanner SUBNET", subnet);
                 for (int i = 1; i <= 255; i++) {
                     String address = subnet + i;
-                    if (address.equals(accessPointIp)) {
-                        //TODO skip ip of own device
+                    if (address.equals(accessPointIp) || address.equals(ipString)) {
                         continue;
                     }
                     try {
@@ -82,8 +82,10 @@ public class WifiDeviceScanner extends AppCompatActivity {
                         Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
                         if (inetAddress.isReachable(100)) {
                             Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
-//                            devices.add(inetAddress.getHostAddress()+": "+address);
-                            devices.add(inetAddress.getHostName());
+
+                            innerListDevice.add(inetAddress.getHostName());
+                            innerListDevice.add(address);
+                            devices.add(innerListDevice);
                             Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
                         }
                     } catch (UnknownHostException e) {

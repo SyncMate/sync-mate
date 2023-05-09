@@ -1,4 +1,4 @@
-package com.example.cse.syncmate;
+package com.example.cse.syncmate.Send.Adapter;
 
 import android.content.Context;
 
@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.cse.syncmate.R;
 
 import java.util.List;
 
