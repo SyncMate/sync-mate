@@ -1,20 +1,20 @@
-package com.example.cse.syncmate;
+package com.example.cse.syncmate.Send;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.example.cse.syncmate.R;
+import com.example.cse.syncmate.Send.Adapter.FolderAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class SendFragment extends Fragment {
 //                FolderCreateFragment folderCreateFragment = new
 //                        FolderCreateFragment();
 //                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.send_frag, folderCreateFragment).commit();
-                Intent i = new Intent(getContext(),FolderCreateActivity.class);
+                Intent i = new Intent(getContext(), FolderCreateActivity.class);
                 startActivity(i);
             }
         });

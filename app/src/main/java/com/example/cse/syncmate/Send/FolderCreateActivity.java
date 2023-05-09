@@ -1,4 +1,4 @@
-package com.example.cse.syncmate;
+package com.example.cse.syncmate.Send;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.documentfile.provider.DocumentFile;
@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.cse.syncmate.R;
 
 import java.io.File;
 import java.io.IOException;

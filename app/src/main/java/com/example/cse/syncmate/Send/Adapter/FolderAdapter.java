@@ -1,4 +1,4 @@
-package com.example.cse.syncmate;
+package com.example.cse.syncmate.Send.Adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,6 +16,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.cse.syncmate.Send.FileListActivity;
+import com.example.cse.syncmate.R;
+import com.example.cse.syncmate.Send.WifiDeviceScanner;
 
 import java.util.List;
 
@@ -61,7 +65,7 @@ public class FolderAdapter extends ArrayAdapter<String> {
             WifiDeviceScanner wifiDeviceScanner = new WifiDeviceScanner(getContext());
             Log.d("WifiDeviceScanner", "PASSED INITIALIZATION");
 
-            List<String> eligibleDevices = wifiDeviceScanner.scanForDevices();
+            List<List<String>> eligibleDevices = wifiDeviceScanner.scanForDevices();
             if (eligibleDevices.isEmpty()) {
                 Log.d("WifiDeviceScanner ELIGIBILE LIST SIZE", String.valueOf(eligibleDevices.size()));
                 Toast.makeText(getContext(), "NO DEVICES FOUND", Toast.LENGTH_SHORT).show();

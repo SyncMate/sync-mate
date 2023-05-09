@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/send_frag"
     android:background="@color/app_background"
-    tools:context=".SendFragment">
+    tools:context=".Send.SendFragment">
 
     <TextView
         android:layout_width="match_parent"
