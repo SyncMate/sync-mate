@@ -103,5 +103,8 @@ public class WifiDeviceScanner extends AppCompatActivity {
         return devices;
     }
 
+    // TODO - 1. UI: select device for syncing (Model pop up with available devices)
+    // TODO - 2. Put multi threads on device scanner
+    // TODO - 3. When Wifi disabled while syncing, stop scanning
 }
 

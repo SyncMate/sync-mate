@@ -1,6 +1,8 @@
 package com.example.cse.syncmate.Send.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import com.example.cse.syncmate.Send.FileListActivity;
 import com.example.cse.syncmate.R;
 import com.example.cse.syncmate.Send.WifiDeviceScanner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FolderAdapter extends ArrayAdapter<String> {
@@ -62,9 +65,22 @@ public class FolderAdapter extends ArrayAdapter<String> {
             if (eligibleDevices.isEmpty()) {
                 Log.d("WifiDeviceScanner ELIGIBILE LIST SIZE", String.valueOf(eligibleDevices.size()));
                 Toast.makeText(getContext(), "NO DEVICES FOUND", Toast.LENGTH_SHORT).show();
+
             } else {
                 Log.d("WifiDeviceScanner NO ELIGIBILE LIST", String.valueOf(eligibleDevices.size()) + eligibleDevices);
                 Toast.makeText(getContext(), "Eligible devices: " + eligibleDevices, Toast.LENGTH_SHORT).show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Select a device to sync with");
+                List<String> deviceNames = new ArrayList<>();
+                for (List<String> deviceInfo : eligibleDevices) {
+                    deviceNames.add(deviceInfo.get(0));
+                }
+                builder.setItems(deviceNames.toArray(new String[0]), (dialog, which) -> {
+                    String selectedDeviceName = deviceNames.get(which);
+                    Toast.makeText(getContext(), "Selected device: " + selectedDeviceName, Toast.LENGTH_SHORT).show();
+                });
+                builder.create().show();
             }
         });
 
