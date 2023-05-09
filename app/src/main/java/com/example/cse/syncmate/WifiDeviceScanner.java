@@ -22,7 +22,7 @@ import java.util.List;
 
 public class WifiDeviceScanner extends AppCompatActivity {
 
-    private Context context;
+    private final Context context;
 
     public WifiDeviceScanner(Context context) {
         this.context = context;
@@ -44,12 +44,12 @@ public class WifiDeviceScanner extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        Log.d("KRISH11", "ENTER TO SCANFORDEVICES METHOD");
+        Log.d("WifiDeviceScanner", "ENTER TO SCANFORDEVICES METHOD");
         List<String> devices = new ArrayList<>();
-        Log.d("KRISH12", "PASSED GET CONTEXT");
+        Log.d("WifiDeviceScanner", "PASSED GET CONTEXT");
         try {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            Log.d("KRISH1", "BEFORE WIFI ENABLES");
+            Log.d("WifiDeviceScanner", "BEFORE WIFI ENABLES");
             DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
             int gatewayIp = dhcpInfo.gateway;
             String accessPointIp = String.format(
@@ -59,17 +59,17 @@ public class WifiDeviceScanner extends AppCompatActivity {
                     (gatewayIp >> 16 & 0xff),
                     (gatewayIp >> 24 & 0xff)
             );
-            Log.d("KRISH18 ACCESS POINT IP", accessPointIp);
+            Log.d("WifiDeviceScanner ACCESS POINT IP", accessPointIp);
 
             if (wifiManager.isWifiEnabled()) {
-                Log.d("KRISH2", "WIFI ENABLED DEVICE");
+                Log.d("WifiDeviceScanner", "WIFI ENABLED DEVICE");
                 WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                Log.d("KRISH3 IP ADDRESS", String.valueOf(wifiInfo.getIpAddress()));
+                Log.d("WifiDeviceScanner IP ADDRESS", String.valueOf(wifiInfo.getIpAddress()));
                 int ipAddress = wifiInfo.getIpAddress();
                 String ipString = String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff), (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
-                Log.d("KRISH4 IP STRING", ipString);
+                Log.d("WifiDeviceScanner IP STRING", ipString);
                 String subnet = ipString.substring(0, ipString.lastIndexOf(".") + 1);
-                Log.d("KRISH5 SUBNET", subnet);
+                Log.d("WifiDeviceScanner SUBNET", subnet);
                 for (int i = 1; i <= 255; i++) {
                     String address = subnet + i;
                     if (address.equals(accessPointIp)) {
@@ -77,27 +77,27 @@ public class WifiDeviceScanner extends AppCompatActivity {
                         continue;
                     }
                     try {
-                        Log.d("KRISH13 i VALUE", String.valueOf(i));
+                        Log.d("WifiDeviceScanner i VALUE", String.valueOf(i));
                         InetAddress inetAddress = InetAddress.getByName(address);
-                        Log.d("KRISH6 INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
+                        Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
                         if (inetAddress.isReachable(100)) {
-                            Log.d("KRISH14", "INSIDE ISREACHABLE");
+                            Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
 //                            devices.add(inetAddress.getHostAddress()+": "+address);
                             devices.add(inetAddress.getHostName());
-                            Log.d("KRISH15", "ADDED DEVICE TO LIST");
+                            Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
                         }
                     } catch (UnknownHostException e) {
-                        Log.d("KRISH14 UnknownHostException", address);
+                        Log.d("WifiDeviceScanner UnknownHostException", address);
                     } catch (IOException ioe) {
-                        Log.d("KRISH7 IOException", ioe.toString());
+                        Log.d("WifiDeviceScanner IOException", ioe.toString());
                         ioe.printStackTrace();
                     }
                 }
             }
         } catch (NullPointerException e) {
-            Log.e("ERROR", "Couldn't get Wifi Service");
+            Log.e("WifiDeviceScanner ERROR", "Couldn't get Wifi Service");
         }
-        Log.d("KRISH17 TOTAL DEVICES: ", String.valueOf(devices.size()));
+        Log.d("WifiDeviceScanner TOTAL DEVICES: ", String.valueOf(devices.size()));
         return devices;
     }
 

@@ -40,31 +40,27 @@ public class FolderAdapter extends ArrayAdapter<String> {
         TextView folderName = view.findViewById(R.id.folderName);
         folderName.setText(getItem(position));
 
-        folderName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), FileListActivity.class);
-                intent.putExtra("fileName", getItem(position));
-                getContext().startActivity(intent);
-            }
+        folderName.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), FileListActivity.class);
+            intent.putExtra("fileName", getItem(position));
+            getContext().startActivity(intent);
         });
 
         ImageButton syncImage = view.findViewById(R.id.sync_btn);
         syncImage.setImageResource(iconResource2);
 
         syncImage.setOnClickListener(view1 -> {
-            Log.d("KRISH8", "STARTED CLICK METHOD");
+            Log.d("WifiDeviceScanner", "STARTED CLICK METHOD");
             WifiDeviceScanner wifiDeviceScanner = new WifiDeviceScanner(getContext());
-            Log.d("KRISH9", "PASSED INITIALIZATION");
+            Log.d("WifiDeviceScanner", "PASSED INITIALIZATION");
 
             List<String> eligibleDevices = wifiDeviceScanner.scanForDevices();
             if (eligibleDevices.isEmpty()) {
-                Log.d("KRISH10 ELIGIBILE LIST SIZE", String.valueOf(eligibleDevices.size()));
+                Log.d("WifiDeviceScanner ELIGIBILE LIST SIZE", String.valueOf(eligibleDevices.size()));
                 Toast.makeText(getContext(), "NO DEVICES FOUND", Toast.LENGTH_SHORT).show();
             } else {
-                Log.d("KRISH16 NO ELIGIBILE LIST", String.valueOf(eligibleDevices.size()) + eligibleDevices);
+                Log.d("WifiDeviceScanner NO ELIGIBILE LIST", String.valueOf(eligibleDevices.size()) + eligibleDevices);
                 Toast.makeText(getContext(), "Eligible devices: " + eligibleDevices, Toast.LENGTH_SHORT).show();
-
             }
         });
 
