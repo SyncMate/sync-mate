@@ -19,6 +19,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class WifiDeviceScanner extends AppCompatActivity {
 
@@ -62,6 +65,9 @@ public class WifiDeviceScanner extends AppCompatActivity {
             );
             Log.d("WifiDeviceScanner ACCESS POINT IP", accessPointIp);
 
+            // Create a thread pool with 10 threads
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
+
             if (wifiManager.isWifiEnabled()) {
                 Log.d("WifiDeviceScanner", "WIFI ENABLED DEVICE");
                 WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -76,28 +82,36 @@ public class WifiDeviceScanner extends AppCompatActivity {
                     if (address.equals(accessPointIp) || address.equals(ipString)) {
                         continue;
                     }
-                    try {
-                        Log.d("WifiDeviceScanner i VALUE", String.valueOf(i));
-                        InetAddress inetAddress = InetAddress.getByName(address);
-                        Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
-                        if (inetAddress.isReachable(100)) {
-                            Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
+                    int finalI = i;
+                    executorService.submit(() -> {
+                        try {
+                            Log.d("WifiDeviceScanner i VALUE", String.valueOf(finalI));
+                            InetAddress inetAddress = InetAddress.getByName(address);
+                            Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
+                            if (inetAddress.isReachable(150)) {
+                                Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
 
-                            innerListDevice.add(inetAddress.getHostName());
-                            innerListDevice.add(address);
-                            devices.add(innerListDevice);
-                            Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
+                                innerListDevice.add(inetAddress.getHostName());
+                                innerListDevice.add(address);
+                                devices.add(innerListDevice);
+                                Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
+                            }
+                        } catch (UnknownHostException e) {
+                            Log.d("WifiDeviceScanner UnknownHostException", address);
+                        } catch (IOException ioe) {
+                            Log.d("WifiDeviceScanner IOException", ioe.toString());
+                            ioe.printStackTrace();
                         }
-                    } catch (UnknownHostException e) {
-                        Log.d("WifiDeviceScanner UnknownHostException", address);
-                    } catch (IOException ioe) {
-                        Log.d("WifiDeviceScanner IOException", ioe.toString());
-                        ioe.printStackTrace();
-                    }
+                    });
                 }
             }
+            // Wait for all tasks to complete
+            executorService.shutdown();
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (NullPointerException e) {
             Log.e("WifiDeviceScanner ERROR", "Couldn't get Wifi Service");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         Log.d("WifiDeviceScanner TOTAL DEVICES: ", String.valueOf(devices.size()));
         return devices;
@@ -106,5 +120,6 @@ public class WifiDeviceScanner extends AppCompatActivity {
     // TODO - 1. UI: select device for syncing (Model pop up with available devices)
     // TODO - 2. Put multi threads on device scanner
     // TODO - 3. When Wifi disabled while syncing, stop scanning
+    // TODO - 4. Permission issue (refine the solution)
 }
 
