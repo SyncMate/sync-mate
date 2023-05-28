@@ -51,8 +51,10 @@ public class WifiDeviceScanner extends AppCompatActivity {
         List<List<String>> devices = new ArrayList<>();
         List<String> innerListDevice = new ArrayList<>();
         Log.d("WifiDeviceScanner", "PASSED GET CONTEXT");
+
         try {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
             Log.d("WifiDeviceScanner", "BEFORE WIFI ENABLES");
             DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
             int gatewayIp = dhcpInfo.gateway;
@@ -119,6 +121,11 @@ public class WifiDeviceScanner extends AppCompatActivity {
 
     // TODO - 1. UI: select device for syncing (Model pop up with available devices)
     // TODO - 2. Put multi threads on device scanner
+//    Deferrable work
+//    Example
+//    An app wants to regularly sync data with a backend. The user does not trigger the sync, and the work should take place when the device is idle. The recommended approach is to use a PeriodicWorkRequest with a custom Worker and constraints for these scenarios.
+//    https://developer.android.com/topic/libraries/architecture/workmanager/how-to/define-work#schedule_periodic_work
+
     // TODO - 3. When Wifi disabled while syncing, stop scanning
     // TODO - 4. Permission issue (refine the solution)
 }

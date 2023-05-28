@@ -2,7 +2,6 @@ package com.example.cse.syncmate.Send.Adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +16,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.cse.syncmate.Send.FileListActivity;
 import com.example.cse.syncmate.R;
+import com.example.cse.syncmate.Send.FileListActivity;
+import com.example.cse.syncmate.Send.FileSender;
 import com.example.cse.syncmate.Send.WifiDeviceScanner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class FolderAdapter extends ArrayAdapter<String> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View view, @NonNull ViewGroup parent) {
+
         if (view == null) {
             view = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
         }
@@ -73,12 +75,45 @@ public class FolderAdapter extends ArrayAdapter<String> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Select a device to sync with");
                 List<String> deviceNames = new ArrayList<>();
+                List<String> deviceIPs = new ArrayList<>();
                 for (List<String> deviceInfo : eligibleDevices) {
                     deviceNames.add(deviceInfo.get(0));
                 }
+                for (List<String> deviceIP : eligibleDevices) {
+                    deviceIPs.add(deviceIP.get(1));
+                }
+                Log.d("WifiDeviceScanner Device IP", deviceIPs.toString());
                 builder.setItems(deviceNames.toArray(new String[0]), (dialog, which) -> {
                     String selectedDeviceName = deviceNames.get(which);
+                    String selectedDeviceIP = deviceIPs.get(which);
                     Toast.makeText(getContext(), "Selected device: " + selectedDeviceName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Selected device IP: " + selectedDeviceIP, Toast.LENGTH_SHORT).show();
+                    try {
+                        Log.d("WifiDeviceScanner", "BEFORE FILE PATH");
+                        File fileToSend = new File("/storage/emulated/0/Download/SyncMate/ggg/fff.pdf"); // Replace with the actual file path
+                        Log.d("WifiDeviceScanner", "BEFORE SENDING FILE");
+                        FileSender.FileTransferCallback callback = new FileSender.FileTransferCallback() {
+                            @Override
+                            public void onSuccess() {
+                                // File transfer successful
+                                // Code here to handle the successful case
+                                System.out.println("File transfer completed successfully.");
+                            }
+
+                            @Override
+                            public void onFailure(String errorMessage) {
+                                // File transfer failed
+                                // Add your code here to handle the failure case
+                                System.out.println("File transfer failed. Error: " + errorMessage);
+                            }
+                        };
+
+                        FileSender.sendFile(selectedDeviceIP, fileToSend, callback);
+                        Log.d("WifiDeviceScanner", "AFTER SENDING FILE");
+                    } catch (Exception e) {
+                        Log.d("WifiDeviceScanner", String.valueOf(e));
+                        Log.d("WifiDeviceScanner", "Error in sending file");
+                    }
                 });
                 builder.create().show();
             }
