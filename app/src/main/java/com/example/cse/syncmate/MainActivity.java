@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cse.syncmate.History.HistoryFragment;
+import com.example.cse.syncmate.Receive.FileReceiver;
 import com.example.cse.syncmate.Receive.ReceiveFragment;
 import com.example.cse.syncmate.Send.SendFragment;
 import com.example.cse.syncmate.Settings.SettingsFragment;
@@ -30,6 +31,14 @@ public class MainActivity extends AppCompatActivity
         bottomNavigationView
                 .setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.send);
+
+        // Call the FileReceiver main method in a separate thread
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FileReceiver.main(new String[]{});
+            }
+        }).start();
     }
     SendFragment send = new SendFragment();
     ReceiveFragment receive = new ReceiveFragment();

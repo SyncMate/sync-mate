@@ -44,6 +44,7 @@ public class FileSender {
                 Log.d("File to receive ip", address_str);
                 Log.d("File to receive port", String.valueOf(finalReceiverPort));
                 Socket socket = new Socket(address_str, finalReceiverPort);
+                Log.d("File sending socket", String.valueOf(socket.getLocalPort()));
 
                 // Retrieve the dynamically assigned port
                 RECEIVER_PORT = socket.getLocalPort();
@@ -100,7 +101,9 @@ public class FileSender {
     private static void startHeartbeatListener(int receiverPort) {
         new Thread(() -> {
             try {
+                Log.d("File heartbeat: ", "ENTERED START HEARTBEAT LISTENER");
                 ServerSocket serverSocket = new ServerSocket(receiverPort);
+                Log.d("File to receive port", String.valueOf(serverSocket.toString()));
                 System.out.println("Heartbeat listener is running on port " + receiverPort);
 
                 // Accept incoming connections indefinitely
