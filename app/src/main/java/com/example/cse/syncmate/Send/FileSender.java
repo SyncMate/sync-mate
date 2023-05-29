@@ -23,6 +23,12 @@ public class FileSender {
         void onSuccess();
 
         void onFailure(String errorMessage);
+
+        void onTransferStarted();
+
+        void onTransferCompleted();
+
+        void onTransferFailed(String errorMessage);
     }
 
     public static void sendFile(String ipAddress, File file, FileTransferCallback callback) {
@@ -43,7 +49,9 @@ public class FileSender {
 
                 Log.d("File to receive ip", address_str);
                 Log.d("File to receive port", String.valueOf(finalReceiverPort));
-                Socket socket = new Socket(address_str, finalReceiverPort);
+
+                //TODO - Get receiver port here
+                Socket socket = new Socket(address_str, 1024);
                 Log.d("File sending socket", String.valueOf(socket.getLocalPort()));
 
                 // Retrieve the dynamically assigned port

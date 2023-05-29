@@ -1,9 +1,11 @@
 package com.example.cse.syncmate.Receive;
 
+import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,7 +16,7 @@ import java.util.TimerTask;
 
 public class FileReceiver {
 
-    private static final int MIN_PORT = 1024;
+    private static final int MIN_PORT = 1023;
     private static final int MAX_PORT = 65535;
     private static final int HEARTBEAT_INTERVAL = 5000; // 5 seconds
 
@@ -37,43 +39,55 @@ public class FileReceiver {
 
             // Create a server socket and bind it to the selected port
             ServerSocket serverSocket = new ServerSocket(port);
+            serverSocket.setReuseAddress(true);
+
             Log.d("FileReceiver SERVERSOCKET", serverSocket.toString());
 
             System.out.println("FileReceiver is listening on port " + port);
 
             // Start the heartbeat thread
-            startHeartbeatThread(serverSocket, port);
+            //startHeartbeatThread(serverSocket, port);
             // Accept incoming connections indefinitely
             while (true) {
+                Log.d("FileReceiver WHILE LOOP", "CAME INSIDE WHILE LOOP");
+
                 // Accept the connection from the sender
                 Socket socket = serverSocket.accept();
+                Log.d("FileReceiver ACCEPT SERVERSOCKET", String.valueOf(serverSocket.isClosed()));
 
                 // Handle the file transfer
                 handleFileTransfer(socket);
             }
         } catch (IOException e) {
-            Log.d("FileReceiver", String.valueOf(e));
+            Log.d("FileReceiver ERROR", String.valueOf(e));
             e.printStackTrace();
         }
     }
 
     private static void handleFileTransfer(Socket socket) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
-
         // Specify the file path to save the received file
-        String saveFilePath = "/storage/emulated/0/Download/SyncMate/ggg/fff.pdf"; // Replace with the desired file path
+        String saveFilePath = "/storage/emulated/0/Download/SyncMate/Hooks.pdf"; //TODO - Replace with the desired file path
 
-        FileOutputStream fos = new FileOutputStream(saveFilePath);
+        try {
+            FileOutputStream fos = new FileOutputStream(saveFilePath);
+            Log.d("FileReceiver FOS", fos.toString());
 
-        // Read the file data from the socket and save it
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = bis.read(buffer)) != -1) {
-            fos.write(buffer, 0, bytesRead);
+            // Read the file data from the socket and save it
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = bis.read(buffer)) != -1) {
+
+                Log.d("File read and save", "READ AND SAVE FILE");
+                fos.write(buffer, 0, bytesRead);
+            }
+
+            // Close the output stream and socket
+            fos.close();
+        } catch (Exception e) {
+            Log.d("File Save Error", e.toString());
         }
 
-        // Close the output stream and socket
-        fos.close();
         socket.close();
 
         System.out.println("File received and saved successfully.");
@@ -93,21 +107,21 @@ public class FileReceiver {
         return -1; // No available ports found
     }
 
-    private static void startHeartbeatThread(ServerSocket serverSocket, int port) {
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    // Send a heartbeat message to the sender
-                    Socket heartbeatSocket = new Socket("192.168.8.197", port);
-                    PrintWriter out = new PrintWriter(heartbeatSocket.getOutputStream(), true);
-                    out.println("Heartbeat");
-                    heartbeatSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 0, HEARTBEAT_INTERVAL);
-    }
+//    private static void startHeartbeatThread(ServerSocket serverSocket, int port) {
+//        Timer timer = new Timer();
+//        timer.scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                try {
+//                    // Send a heartbeat message to the sender
+//                    Socket heartbeatSocket = new Socket("192.168.8.197", port);
+//                    PrintWriter out = new PrintWriter(heartbeatSocket.getOutputStream(), true);
+//                    out.println("Heartbeat");
+//                    heartbeatSocket.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, 0, HEARTBEAT_INTERVAL);
+//    }
 }

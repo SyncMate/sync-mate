@@ -9,7 +9,8 @@
         tools:ignore="ScopedStorage" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+        android:maxSdkVersion="32"
+        android:requestLegacyExternalStorage="true"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -29,6 +30,8 @@
             android:exported="false" />
         <activity
             android:name=".Send.FolderCreateActivity"
+            android:exported="false" />
+        <activity android:name=".Send.FileSenderActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

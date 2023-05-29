@@ -3,6 +3,8 @@ package com.example.cse.syncmate.Send.Adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +21,13 @@ import androidx.annotation.Nullable;
 import com.example.cse.syncmate.R;
 import com.example.cse.syncmate.Send.FileListActivity;
 import com.example.cse.syncmate.Send.FileSender;
+import com.example.cse.syncmate.Send.FileSenderActivity;
 import com.example.cse.syncmate.Send.WifiDeviceScanner;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import static androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.EXTRA_PERMISSION_GRANT_RESULTS;
 
 public class FolderAdapter extends ArrayAdapter<String> {
 
@@ -90,7 +94,21 @@ public class FolderAdapter extends ArrayAdapter<String> {
                     Toast.makeText(getContext(), "Selected device IP: " + selectedDeviceIP, Toast.LENGTH_SHORT).show();
                     try {
                         Log.d("WifiDeviceScanner", "BEFORE FILE PATH");
-                        File fileToSend = new File("/storage/emulated/0/Download/SyncMate/ggg/fff.pdf"); // Replace with the actual file path
+//                        File fileToSend = new File("/storage/emulated/0/Download/SyncMate/ggg/fff.pdf"); // Replace with the actual file path
+
+                        // Get the directory where your app can store files
+//                        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Career/";
+//                        File storageDir = new File(Environment.getExternalStorageDirectory(), "Download");
+//                        File file = new File(storageDir, "44-51.pdf");
+// Check if the storage directory exists or create it if necessary
+//                        if (storageDir != null && !storageDir.exists()) {
+//                            storageDir.mkdirs();
+//                        }
+
+// Create a file within the storage directory
+                        File fileToSend = new File(path, "Hooks.pdf");
+//                        File fileToSend = new File("44-51.pdf"); // Replace with the actual file path
                         Log.d("WifiDeviceScanner", "BEFORE SENDING FILE");
                         FileSender.FileTransferCallback callback = new FileSender.FileTransferCallback() {
                             @Override
@@ -106,9 +124,30 @@ public class FolderAdapter extends ArrayAdapter<String> {
                                 // Add your code here to handle the failure case
                                 System.out.println("File transfer failed. Error: " + errorMessage);
                             }
+
+                            @Override
+                            public void onTransferStarted() {
+
+                            }
+
+                            @Override
+                            public void onTransferCompleted() {
+
+                            }
+
+                            @Override
+                            public void onTransferFailed(String errorMessage) {
+
+                            }
                         };
 
-                        FileSender.sendFile(selectedDeviceIP, fileToSend, callback);
+//                        FileSender.sendFile(selectedDeviceIP, fileToSend, callback);
+
+                        // Create an instance of FileSenderActivity
+                        FileSenderActivity fileSenderActivity = new FileSenderActivity();
+
+// Call the handleFileTransfer method and pass the file path
+                        fileSenderActivity.handleFileTransfer(Uri.fromFile(fileToSend), selectedDeviceIP);
                         Log.d("WifiDeviceScanner", "AFTER SENDING FILE");
                     } catch (Exception e) {
                         Log.d("WifiDeviceScanner", String.valueOf(e));
