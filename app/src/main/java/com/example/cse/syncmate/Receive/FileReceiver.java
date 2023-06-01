@@ -85,16 +85,47 @@ public class FileReceiver {
         if (!directory.exists()) {
             directory.mkdirs();
         }
-//        String saveFilePath = "/storage/emulated/0/Download/SyncMate/" + fileName;
-//        Log.d("FileReceiver", saveFilePath);
         try {
+            // Read the parent folder name length
+            int folderNameLength = bis.read();
+            if (folderNameLength == -1) {
+                throw new IOException("Invalid protocol");
+            }
+
+            // Read the parent folder name
+            byte[] folderNameBytes = new byte[folderNameLength];
+            int bytesRead = bis.read(folderNameBytes);
+            if (bytesRead == -1) {
+                throw new IOException("Invalid protocol");
+            }
+            String folderName = new String(folderNameBytes);
+
+            // Create a folder with the parent folder name
+            File parentFolder = new File(saveDirectory, folderName);
+            if (!parentFolder.exists()) {
+                parentFolder.mkdirs();
+            }
 
             boolean moreFiles = true;
-            int fileCount = 0;
             while (moreFiles) {
 
+                int fileNameLength = bis.read();
+                if (fileNameLength == -1) {
+                    break; // Exit the loop if no more files are expected
+                }
+
+                // Read the file name
+                byte[] fileNameBytes = new byte[fileNameLength];
+                bytesRead = bis.read(fileNameBytes);
+                if (bytesRead == -1) {
+                    break; // Exit the loop if no more files are expected
+                }
+
+                String selectedFileName = new String(fileNameBytes);
+
                 // Specify the file path to save the received file
-                String saveFilePath = saveDirectory + "File" + fileCount + "_" + System.currentTimeMillis() + ".pdf";
+                // String saveFilePath = saveDirectory + "File" + fileCount + "_" + System.currentTimeMillis() + ".pdf";
+                String saveFilePath = parentFolder.getAbsolutePath() + File.separator + selectedFileName;
 
                 FileOutputStream fos = new FileOutputStream(saveFilePath);
                 Log.d("FileReceiver FOS", fos.toString());
@@ -102,15 +133,13 @@ public class FileReceiver {
 
                 // Read the file data from the socket and save it
                 byte[] buffer = new byte[1024];
-                int bytesRead;
+//                int bytesRead;
                 while ((bytesRead = bis.read(buffer)) != -1) {
                     fos.write(buffer, 0, bytesRead);
                 }
 
                 // Close the output stream
                 fos.close();
-                // Increment the file count
-                fileCount++;
 
                 // Check if there are more files to receive
                 int signal = bis.read(); // Read a single byte as a signal
