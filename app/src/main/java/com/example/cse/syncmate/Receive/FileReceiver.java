@@ -5,6 +5,7 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +57,16 @@ public class FileReceiver {
                 Log.d("FileReceiver ACCEPT SERVERSOCKET", String.valueOf(serverSocket.isClosed()));
 
                 // Handle the file transfer
+//                DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+//
+//                //Read the number of files being sent
+//                int numFiles = dataInputStream.readInt();
+//                Log.d("numberInput", String.valueOf(dataInputStream));
+//                for (int i = 0; i < numFiles; i++) {
+//                    //Read the file name
+//                    String fileName = dataInputStream.readUTF();
+//                    handleFileTransfer(socket, fileName);
+//                }
                 handleFileTransfer(socket);
             }
         } catch (IOException e) {
@@ -67,23 +78,47 @@ public class FileReceiver {
     private static void handleFileTransfer(Socket socket) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         // Specify the file path to save the received file
-        String saveFilePath = "/storage/emulated/0/Download/SyncMate/Hooks.pdf"; //TODO - Replace with the desired file path
-
+//        String saveFilePath = "/storage/emulated/0/Download/SyncMate/Hooks.pdf"; //TODO - Replace with the desired file path
+        // Specify the directory path to save the received files
+        String saveDirectory = "/storage/emulated/0/Download/SyncMate/";
+        File directory = new File(saveDirectory);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+//        String saveFilePath = "/storage/emulated/0/Download/SyncMate/" + fileName;
+//        Log.d("FileReceiver", saveFilePath);
         try {
-            FileOutputStream fos = new FileOutputStream(saveFilePath);
-            Log.d("FileReceiver FOS", fos.toString());
 
-            // Read the file data from the socket and save it
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = bis.read(buffer)) != -1) {
+            boolean moreFiles = true;
+            while (moreFiles) {
+                int fileCount = 0;
+                // Specify the file path to save the received file
+                String saveFilePath = saveDirectory + "File" + fileCount + "_" + System.currentTimeMillis() + ".pdf";
 
-                Log.d("File read and save", "READ AND SAVE FILE");
-                fos.write(buffer, 0, bytesRead);
+                FileOutputStream fos = new FileOutputStream(saveFilePath);
+                Log.d("FileReceiver FOS", fos.toString());
+
+
+                // Read the file data from the socket and save it
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = bis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead);
+                }
+
+                // Close the output stream
+                fos.close();
+                // Increment the file count
+                fileCount++;
+
+                // Check if there are more files to receive
+                int signal = bis.read(); // Read a single byte as a signal
+                if (signal == -1 || signal != 1) {
+                    moreFiles = false; // Exit the loop if the signal indicates no more files
+                }
+                Log.d("recfilename", String.valueOf(moreFiles));
             }
 
-            // Close the output stream and socket
-            fos.close();
         } catch (Exception e) {
             Log.d("File Save Error", e.toString());
         }

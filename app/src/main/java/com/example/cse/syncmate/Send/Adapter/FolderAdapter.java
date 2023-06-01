@@ -25,6 +25,8 @@ import com.example.cse.syncmate.Send.FileSenderActivity;
 import com.example.cse.syncmate.Send.WifiDeviceScanner;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import static androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.EXTRA_PERMISSION_GRANT_RESULTS;
@@ -98,7 +100,8 @@ public class FolderAdapter extends ArrayAdapter<String> {
 
                         // Get the directory where your app can store files
 //                        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Career/";
+//                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Career/";
+                        String path = "/storage/emulated/0/Download/SyncMate/";
 //                        File storageDir = new File(Environment.getExternalStorageDirectory(), "Download");
 //                        File file = new File(storageDir, "44-51.pdf");
 // Check if the storage directory exists or create it if necessary
@@ -106,49 +109,64 @@ public class FolderAdapter extends ArrayAdapter<String> {
 //                            storageDir.mkdirs();
 //                        }
 
-// Create a file within the storage directory
-                        File fileToSend = new File(path, "Hooks.pdf");
+                        // get path of selected folder
+                        String selectedFolder = getItem(position);
+                        Path basePath = Paths.get(path);
+                        Path fullPath = basePath.resolve(selectedFolder);
+                        String finalPath = fullPath.toString();
+
+                        // get files in the selected folder
+                        File directory = new File(finalPath);
+                        File[] files = directory.listFiles();
+
+                        Log.d("FileSelected", finalPath);
+                        for (File fileName : files) {
+                            // Create a file within the storage directory
+                            File fileToSend = new File(finalPath, fileName.getName());
+                            Log.d("FileSelected", String.valueOf(fileToSend));
 //                        File fileToSend = new File("44-51.pdf"); // Replace with the actual file path
-                        Log.d("WifiDeviceScanner", "BEFORE SENDING FILE");
-                        FileSender.FileTransferCallback callback = new FileSender.FileTransferCallback() {
-                            @Override
-                            public void onSuccess() {
-                                // File transfer successful
-                                // Code here to handle the successful case
-                                System.out.println("File transfer completed successfully.");
-                            }
+                            Log.d("WifiDeviceScanner", "BEFORE SENDING FILE");
+                            FileSender.FileTransferCallback callback = new FileSender.FileTransferCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    // File transfer successful
+                                    // Code here to handle the successful case
+                                    System.out.println("File transfer completed successfully.");
+                                }
 
-                            @Override
-                            public void onFailure(String errorMessage) {
-                                // File transfer failed
-                                // Add your code here to handle the failure case
-                                System.out.println("File transfer failed. Error: " + errorMessage);
-                            }
+                                @Override
+                                public void onFailure(String errorMessage) {
+                                    // File transfer failed
+                                    // Add your code here to handle the failure case
+                                    System.out.println("File transfer failed. Error: " + errorMessage);
+                                }
 
-                            @Override
-                            public void onTransferStarted() {
+                                @Override
+                                public void onTransferStarted() {
 
-                            }
+                                }
 
-                            @Override
-                            public void onTransferCompleted() {
+                                @Override
+                                public void onTransferCompleted() {
 
-                            }
+                                }
 
-                            @Override
-                            public void onTransferFailed(String errorMessage) {
+                                @Override
+                                public void onTransferFailed(String errorMessage) {
 
-                            }
-                        };
+                                }
+                            };
 
 //                        FileSender.sendFile(selectedDeviceIP, fileToSend, callback);
 
-                        // Create an instance of FileSenderActivity
-                        FileSenderActivity fileSenderActivity = new FileSenderActivity();
+                            // Create an instance of FileSenderActivity
+                            FileSenderActivity fileSenderActivity = new FileSenderActivity();
 
 // Call the handleFileTransfer method and pass the file path
-                        fileSenderActivity.handleFileTransfer(Uri.fromFile(fileToSend), selectedDeviceIP);
-                        Log.d("WifiDeviceScanner", "AFTER SENDING FILE");
+                            fileSenderActivity.handleFileTransfer(Uri.fromFile(fileToSend), selectedDeviceIP);
+                            Log.d("WifiDeviceScanner", "AFTER SENDING FILE");
+                        }
+
                     } catch (Exception e) {
                         Log.d("WifiDeviceScanner", String.valueOf(e));
                         Log.d("WifiDeviceScanner", "Error in sending file");
