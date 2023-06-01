@@ -3,6 +3,8 @@ package com.example.cse.syncmate.Send;
 import android.os.StrictMode;
 import android.util.Log;
 
+import com.example.cse.syncmate.Receive.FileReceiver;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -19,6 +21,11 @@ public class FileSender {
 
     private static int RECEIVER_PORT = 0; // Will be dynamically assigned
 
+    private static final int BUFFER_SIZE = 1024;
+    private static final int TIMEOUT = 5000; // Timeout in milliseconds
+
+    private static volatile boolean isPaused = false;
+    private static volatile boolean isCancelled = false;
     public interface FileTransferCallback {
         void onSuccess();
 
@@ -29,12 +36,18 @@ public class FileSender {
         void onTransferCompleted();
 
         void onTransferFailed(String errorMessage);
+
+        void onTransferPaused();
+
+        void onTransferResumed();
+
+        void onTransferCancelled();
     }
 
     public static void sendFile(String ipAddress, File file, FileTransferCallback callback) {
         // StrictMode
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
 
         int finalReceiverPort = findAvailablePort(1024, 65535);
         new Thread(() -> {
@@ -50,6 +63,12 @@ public class FileSender {
                 Log.d("File to receive ip", address_str);
                 Log.d("File to receive port", String.valueOf(finalReceiverPort));
 
+//                int listeningPort = FileReceiver.startFileReceiver(address_str);
+//                int listeningPort = FileReceiver.getListeningPort()[0];
+//                int[] result = FileReceiver.getListeningPort();
+//                Log.d("File sending listening port", String.valueOf(result[0]));
+//                Log.d("File sending listening ip address", String.valueOf(result[1]));
+
                 //TODO - Get receiver port here
                 Socket socket = new Socket(address_str, 1024);
                 Log.d("File sending socket", String.valueOf(socket.getLocalPort()));
@@ -62,9 +81,35 @@ public class FileSender {
                 BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
 
                 // Read the file and send it in chunks
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[BUFFER_SIZE];
                 int bytesRead;
                 while ((bytesRead = bis.read(buffer)) != -1) {
+
+                    // Check if the transfer is paused or cancelled
+                    if (isPaused) {
+                        callback.onTransferPaused();
+                        while (isPaused) {
+                            // Wait until resumed or cancelled
+                            if (isCancelled) {
+                                // Clean up and notify the caller about the transfer cancellation
+                                bis.close();
+                                bos.close();
+                                socket.close();
+                                callback.onTransferCancelled();
+                                return;
+                            }
+                            Thread.sleep(TIMEOUT);
+                        }
+                        callback.onTransferResumed();
+                    } else if (isCancelled) {
+                        // Clean up and notify the caller about the transfer cancellation
+                        bis.close();
+                        bos.close();
+                        socket.close();
+                        callback.onTransferCancelled();
+                        return;
+                    }
+
                     bos.write(buffer, 0, bytesRead);
                 }
 
@@ -77,15 +122,29 @@ public class FileSender {
 
                 // Notify the caller about the successful file transfer
                 callback.onSuccess();
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
 
                 // Notify the caller about the file transfer failure
                 callback.onFailure(e.getMessage());
             }
+
         }).start();
         // Start listening for heartbeat messages from the receiver
         startHeartbeatListener(finalReceiverPort);
+    }
+
+
+    public static void pauseTransfer() {
+        isPaused = true;
+    }
+
+    public static void resumeTransfer() {
+        isPaused = false;
+    }
+
+    public static void cancelTransfer() {
+        isCancelled = true;
     }
 
     private static int findAvailablePort(int minPortNumber, int maxPortNumber) {
@@ -111,7 +170,7 @@ public class FileSender {
             try {
                 Log.d("File heartbeat: ", "ENTERED START HEARTBEAT LISTENER");
                 ServerSocket serverSocket = new ServerSocket(receiverPort);
-                Log.d("File to receive port", String.valueOf(serverSocket.toString()));
+                Log.d("File to receive port", serverSocket.toString());
                 System.out.println("Heartbeat listener is running on port " + receiverPort);
 
                 // Accept incoming connections indefinitely
@@ -140,3 +199,8 @@ public class FileSender {
     }
 
 }
+
+// TODO - SEND AND RECEIVE LOCATION - INTERNAL STORAGE/SYNCMATE/<SELECTED FOLDER>
+// TODO - SEND WHOLE CONTENT IN THE FOLDER TO RECEIVER FOLDER
+// TODO - SEND RECEIVER'S LISTENING PORT TO FILE SENDER
+// TODO - HANDLE THE CASE WHERE MULTIPLE RECEIVERS LISTENING ON PORTS
