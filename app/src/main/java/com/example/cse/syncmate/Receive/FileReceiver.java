@@ -90,8 +90,9 @@ public class FileReceiver {
         try {
 
             boolean moreFiles = true;
+            int fileCount = 0;
             while (moreFiles) {
-                int fileCount = 0;
+
                 // Specify the file path to save the received file
                 String saveFilePath = saveDirectory + "File" + fileCount + "_" + System.currentTimeMillis() + ".pdf";
 
