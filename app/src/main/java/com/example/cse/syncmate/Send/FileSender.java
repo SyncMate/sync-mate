@@ -61,6 +61,17 @@ public class FileSender {
                 BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file.toPath()));
                 BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
 
+                String parentFolder = getFolderNameFromPath(file.toString());
+                bos.write(parentFolder.length());
+                // Send the parent folder name as bytes
+                bos.write(parentFolder.getBytes());
+
+                String fileName = file.getName();
+                // Send the file name length as a single byte
+                bos.write(fileName.length());
+                // Send the file name as bytes
+                bos.write(fileName.getBytes());
+
                 // Read the file and send it in chunks
                 byte[] buffer = new byte[1024];
                 int bytesRead;
@@ -137,6 +148,17 @@ public class FileSender {
 
         // Close the socket connection
         socket.close();
+    }
+
+    private static String getFolderNameFromPath(String filePath) {
+        File file = new File(filePath);
+        String parentPath = file.getParent();
+        if (parentPath != null) {
+            File parentFile = new File(parentPath);
+            return parentFile.getName();
+        } else {
+            return null;
+        }
     }
 
 }
