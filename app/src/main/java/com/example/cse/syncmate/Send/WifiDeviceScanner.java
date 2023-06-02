@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
     }
 
     int PERMISSION_REQUEST_CODE = 1;
+    int numThreads = 8;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,9 +52,12 @@ public class WifiDeviceScanner extends AppCompatActivity {
 
         Log.d("WifiDeviceScanner", "ENTER TO SCANFORDEVICES METHOD");
         List<List<String>> devices = new ArrayList<>();
-        List<String> innerListDevice = new ArrayList<>();
         Log.d("WifiDeviceScanner", "PASSED GET CONTEXT");
-
+        int batchSize = 10; // Number of IP addresses to process in each batch
+        int numBatches = 255 / batchSize;
+        if (255 % batchSize != 0) {
+            numBatches++; // Add an extra batch for the remaining IP addresses
+        }
         try {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
@@ -68,7 +74,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
             Log.d("WifiDeviceScanner ACCESS POINT IP", accessPointIp);
 
             // Create a thread pool with 10 threads
-            ExecutorService executorService = Executors.newFixedThreadPool(10);
+            ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 
             if (wifiManager.isWifiEnabled()) {
                 Log.d("WifiDeviceScanner", "WIFI ENABLED DEVICE");
@@ -79,54 +85,72 @@ public class WifiDeviceScanner extends AppCompatActivity {
                 Log.d("WifiDeviceScanner IP STRING", ipString);
                 String subnet = ipString.substring(0, ipString.lastIndexOf(".") + 1);
                 Log.d("WifiDeviceScanner SUBNET", subnet);
-                for (int i = 1; i <= 255; i++) {
-                    String address = subnet + i;
-                    if (address.equals(accessPointIp) || address.equals(ipString)) {
-                        continue;
-                    }
-                    int finalI = i;
-                    executorService.submit(() -> {
-                        try {
-                            Log.d("WifiDeviceScanner i VALUE", String.valueOf(finalI));
-                            InetAddress inetAddress = InetAddress.getByName(address);
-                            Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
-                            if (inetAddress.isReachable(150)) {
-                                Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
 
-                                innerListDevice.add(inetAddress.getHostName());
-                                innerListDevice.add(address);
-                                devices.add(innerListDevice);
-                                Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
-                            }
-                        } catch (UnknownHostException e) {
-                            Log.d("WifiDeviceScanner UnknownHostException", address);
-                        } catch (IOException ioe) {
-                            Log.d("WifiDeviceScanner IOException", ioe.toString());
-                            ioe.printStackTrace();
+                for (int batch = 0; batch < numBatches; batch++) {
+                    int start = batch * batchSize + 1;
+                    int end = Math.min(start + batchSize - 1, 255);
+
+                    for (int i = start; i <= end; i++) {
+//                for (int i = 1; i <= 255; i++) {
+                        String address = subnet + i;
+                        if (address.equals(accessPointIp) || address.equals(ipString)) {
+                            continue;
                         }
-                    });
+                        int finalI = i;
+                        executorService.submit(() -> {
+                            try {
+                                Log.d("WifiDeviceScanner i VALUE", String.valueOf(finalI));
+                                InetAddress inetAddress = InetAddress.getByName(address);
+                                Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
+                                if (inetAddress.isReachable(200)) {
+                                    List<String> innerListDevice = new ArrayList<>();
+                                    Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
+
+                                    innerListDevice.add(inetAddress.getHostName());
+                                    innerListDevice.add(address);
+
+                                    synchronized (devices) {
+                                        devices.add(innerListDevice);
+                                    }
+//                                devices.add(innerListDevice);
+                                    Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
+                                }
+
+                            } catch (UnknownHostException e) {
+                                Log.d("WifiDeviceScanner UnknownHostException", address);
+                            } catch (IOException ioe) {
+                                Log.d("WifiDeviceScanner IOException", ioe.toString());
+                                ioe.printStackTrace();
+                            }
+                        });
+
+                    }
                 }
             }
-            // Wait for all tasks to complete
             executorService.shutdown();
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+            try {
+                executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                // Handle exception
+            }
+
+            return devices;
         } catch (NullPointerException e) {
             Log.e("WifiDeviceScanner ERROR", "Couldn't get Wifi Service");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
         Log.d("WifiDeviceScanner TOTAL DEVICES: ", String.valueOf(devices.size()));
         return devices;
     }
 
-    // TODO - 1. UI: select device for syncing (Model pop up with available devices)
-    // TODO - 2. Put multi threads on device scanner
+    // TODO - 1. UI: select device for syncing (Model pop up with available devices) - Done initially
+    // TODO - 2. Put multi threads on device scanner - Done
 //    Deferrable work
 //    Example
 //    An app wants to regularly sync data with a backend. The user does not trigger the sync, and the work should take place when the device is idle. The recommended approach is to use a PeriodicWorkRequest with a custom Worker and constraints for these scenarios.
 //    https://developer.android.com/topic/libraries/architecture/workmanager/how-to/define-work#schedule_periodic_work
 
     // TODO - 3. When Wifi disabled while syncing, stop scanning
-    // TODO - 4. Permission issue (refine the solution)
+    // TODO - 4. Permission issue (refine the solution) - Done
 }
 
