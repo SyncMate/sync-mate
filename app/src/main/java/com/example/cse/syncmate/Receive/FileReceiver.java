@@ -200,6 +200,21 @@ public class FileReceiver {
                             public void onTransferFailed(String errorMessage) {
 
                             }
+
+                            @Override
+                            public void onTransferPaused() {
+
+                            }
+
+                            @Override
+                            public void onTransferResumed() {
+
+                            }
+
+                            @Override
+                            public void onTransferCancelled() {
+
+                            }
                         });
                         receivedFiles.add(fileToSend.getName());
                     }

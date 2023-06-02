@@ -163,6 +163,21 @@ public class FileSenderActivity extends AppCompatActivity {
                         // File transfer failed
                         Log.d(TAG, "File transfer failed. Error: " + errorMessage);
                     }
+
+                    @Override
+                    public void onTransferPaused() {
+
+                    }
+
+                    @Override
+                    public void onTransferResumed() {
+
+                    }
+
+                    @Override
+                    public void onTransferCancelled() {
+
+                    }
                 });
             } else {
                 // File does not exist
