@@ -1,25 +1,35 @@
 package com.example.cse.syncmate.Receive;
 
-import android.os.Environment;
+import android.content.Context;
+import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.StrictMode;
 import android.util.Log;
 
+import com.example.cse.syncmate.Send.FileSender;
+
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FileReceiver {
 
     private static final int MIN_PORT = 1023;
     private static final int MAX_PORT = 65535;
     private static final int HEARTBEAT_INTERVAL = 5000; // 5 seconds
+    static List<String> receivedFiles = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -77,10 +87,10 @@ public class FileReceiver {
 
     private static void handleFileTransfer(Socket socket) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
-        // Specify the file path to save the received file
 //        String saveFilePath = "/storage/emulated/0/Download/SyncMate/Hooks.pdf"; //TODO - Replace with the desired file path
         // Specify the directory path to save the received files
         String saveDirectory = "/storage/emulated/0/Download/SyncMate/";
+        List<Integer> x = new ArrayList<>();
         File directory = new File(saveDirectory);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -107,6 +117,7 @@ public class FileReceiver {
             }
 
             boolean moreFiles = true;
+
             while (moreFiles) {
 
                 int fileNameLength = bis.read();
@@ -124,31 +135,77 @@ public class FileReceiver {
                 String selectedFileName = new String(fileNameBytes);
 
                 // Specify the file path to save the received file
-                // String saveFilePath = saveDirectory + "File" + fileCount + "_" + System.currentTimeMillis() + ".pdf";
                 String saveFilePath = parentFolder.getAbsolutePath() + File.separator + selectedFileName;
 
-                FileOutputStream fos = new FileOutputStream(saveFilePath);
-                Log.d("FileReceiver FOS", fos.toString());
+                File existingFile = new File(saveFilePath);
+                if (!existingFile.exists()) {
+                    FileOutputStream fos = new FileOutputStream(saveFilePath);
+                    Log.d("FileReceiver FOS", fos.toString());
 
 
-                // Read the file data from the socket and save it
-                byte[] buffer = new byte[1024];
-//                int bytesRead;
-                while ((bytesRead = bis.read(buffer)) != -1) {
-                    fos.write(buffer, 0, bytesRead);
+                    // Read the file data from the socket and save it
+                    byte[] buffer = new byte[1024];
+                    while ((bytesRead = bis.read(buffer)) != -1) {
+                        fos.write(buffer, 0, bytesRead);
+                    }
+
+                    // Close the output stream
+                    fos.close();
+                    receivedFiles.add(selectedFileName);
+
+                    // Read a single byte as a signal
+                    int signal = bis.read();
+                    if (signal == -1 || signal != 1) {
+                        // Exit the loop if the signal indicates no more files
+                        moreFiles = false;
+                    }
                 }
-
-                // Close the output stream
-                fos.close();
-
-                // Check if there are more files to receive
-                int signal = bis.read(); // Read a single byte as a signal
-                if (signal == -1 || signal != 1) {
-                    moreFiles = false; // Exit the loop if the signal indicates no more files
-                }
-                Log.d("recfilename", String.valueOf(moreFiles));
             }
 
+            // Send files in receiver's folder to sender
+            List<String> receiverParentFolder1 = Arrays.asList(parentFolder.list());
+
+            boolean isContain = receivedFiles.containsAll(receiverParentFolder1);
+
+            InetAddress senderAddress = socket.getInetAddress();
+            String senderIP = senderAddress.getHostAddress();
+            Log.d("CHECK RECEIVER FOLDER", String.valueOf(isContain));
+            while (isContain == false) {
+                for (String file: receiverParentFolder1){
+                    String saveReceivingFilePath1 = parentFolder.getAbsolutePath() + File.separator + file;
+                    File fileToSend = new File(saveReceivingFilePath1);
+
+                    if (!receivedFiles.contains(fileToSend.getName())){
+                        FileSender.sendFile(senderIP, fileToSend, new FileSender.FileTransferCallback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onFailure(String errorMessage) {
+
+                            }
+
+                            @Override
+                            public void onTransferStarted() {
+
+                            }
+
+                            @Override
+                            public void onTransferCompleted() {
+
+                            }
+                            @Override
+                            public void onTransferFailed(String errorMessage) {
+
+                            }
+                        });
+                        receivedFiles.add(fileToSend.getName());
+                    }
+                }
+                isContain = true;
+            }
         } catch (Exception e) {
             Log.d("File Save Error", e.toString());
         }
