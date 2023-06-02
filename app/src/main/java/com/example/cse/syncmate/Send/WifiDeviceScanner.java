@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
     }
 
     int PERMISSION_REQUEST_CODE = 1;
+    int numThreads = 8;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +52,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
 
         Log.d("WifiDeviceScanner", "ENTER TO SCANFORDEVICES METHOD");
         List<List<String>> devices = new ArrayList<>();
-        List<String> innerListDevice = new ArrayList<>();
+//        List<String> innerListDevice = new ArrayList<>();
         Log.d("WifiDeviceScanner", "PASSED GET CONTEXT");
 
         try {
@@ -68,7 +71,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
             Log.d("WifiDeviceScanner ACCESS POINT IP", accessPointIp);
 
             // Create a thread pool with 10 threads
-            ExecutorService executorService = Executors.newFixedThreadPool(10);
+            ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 
             if (wifiManager.isWifiEnabled()) {
                 Log.d("WifiDeviceScanner", "WIFI ENABLED DEVICE");
@@ -90,7 +93,8 @@ public class WifiDeviceScanner extends AppCompatActivity {
                             Log.d("WifiDeviceScanner i VALUE", String.valueOf(finalI));
                             InetAddress inetAddress = InetAddress.getByName(address);
                             Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
-                            if (inetAddress.isReachable(150)) {
+                            if (inetAddress.isReachable(220)) {
+                                List<String> innerListDevice = new ArrayList<>();
                                 Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
 
                                 innerListDevice.add(inetAddress.getHostName());
@@ -98,6 +102,18 @@ public class WifiDeviceScanner extends AppCompatActivity {
                                 devices.add(innerListDevice);
                                 Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
                             }
+
+//                            InetAddress inetAddress = InetAddress.getByName(address);
+//                            if (isReachableByICMP(inetAddress, 200)) {
+//                                // Device is reachable
+//                                // Add it to the devices list
+//                                Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
+//
+//                                innerListDevice.add(inetAddress.getHostName());
+//                                innerListDevice.add(address);
+//                                devices.add(innerListDevice);
+//                                Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
+//                            }
                         } catch (UnknownHostException e) {
                             Log.d("WifiDeviceScanner UnknownHostException", address);
                         } catch (IOException ioe) {
@@ -105,11 +121,23 @@ public class WifiDeviceScanner extends AppCompatActivity {
                             ioe.printStackTrace();
                         }
                     });
+
+//                    // Check if all threads have been spawned
+//                    if (i % (255 / numThreads) == 0) {
+//                        // Wait for all tasks to complete before proceeding
+//                        executorService.shutdown();
+//                        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+//
+//                        // Create a new ExecutorService for the remaining devices
+//                        executorService = Executors.newFixedThreadPool(numThreads);
+//                    }
                 }
             }
             // Wait for all tasks to complete
             executorService.shutdown();
             executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+            return devices;
         } catch (NullPointerException e) {
             Log.e("WifiDeviceScanner ERROR", "Couldn't get Wifi Service");
         } catch (InterruptedException e) {
@@ -118,6 +146,15 @@ public class WifiDeviceScanner extends AppCompatActivity {
         Log.d("WifiDeviceScanner TOTAL DEVICES: ", String.valueOf(devices.size()));
         return devices;
     }
+
+//    private boolean isReachableByICMP(InetAddress address, int timeout) throws IOException {
+//        try (Socket socket = new Socket()) {
+//            socket.connect(new InetSocketAddress(address, 7), timeout);
+//            return true;
+//        } catch (IOException e) {
+//            return false;
+//        }
+//    }
 
     // TODO - 1. UI: select device for syncing (Model pop up with available devices)
     // TODO - 2. Put multi threads on device scanner
