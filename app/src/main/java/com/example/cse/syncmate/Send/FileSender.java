@@ -43,7 +43,7 @@ public class FileSender {
         void onTransferCancelled();
     }
 
-    public static void sendFile(String ipAddress, File file, FileTransferCallback callback, Context context) {
+    public static void sendFile(String ipAddress, File file, FileTransferCallback callback) {
 
         int finalReceiverPort = findAvailablePort(1024, 65535);
         new Thread(() -> {

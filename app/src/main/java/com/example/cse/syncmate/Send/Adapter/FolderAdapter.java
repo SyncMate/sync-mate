@@ -162,7 +162,7 @@ public class FolderAdapter extends ArrayAdapter<String> {
                             // Create an instance of FileSenderActivity
 
                             // Call the handleFileTransfer method and pass the file path
-                            FileSender.sendFile(selectedDeviceIP,fileToSend,callback,getContext());
+                            FileSender.sendFile(selectedDeviceIP,fileToSend,callback);
 //                            fileSenderActivity.handleFileTransfer(Uri.fromFile(fileToSend), selectedDeviceIP);
                             Log.d("WifiDeviceScanner", "AFTER SENDING FILE");
                         }

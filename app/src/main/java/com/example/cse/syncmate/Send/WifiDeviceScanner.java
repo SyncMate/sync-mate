@@ -123,7 +123,6 @@ public class WifiDeviceScanner extends AppCompatActivity {
                                 ioe.printStackTrace();
                             }
                         });
-
                     }
                 }
             }
