@@ -155,6 +155,21 @@ public class FolderAdapter extends ArrayAdapter<String> {
                                 public void onTransferFailed(String errorMessage) {
 
                                 }
+
+                                @Override
+                                public void onTransferPaused() {
+
+                                }
+
+                                @Override
+                                public void onTransferResumed() {
+
+                                }
+
+                                @Override
+                                public void onTransferCancelled() {
+
+                                }
                             };
 
 //                        FileSender.sendFile(selectedDeviceIP, fileToSend, callback);
