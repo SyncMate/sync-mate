@@ -188,7 +188,7 @@ public class SendFragment extends Fragment {
             File[] files = directory.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.isDirectory()) {
+                    if (file.isDirectory() & !file.getName().equals(".sync")) {
                         folderList.add(file.getName());
                         Log.d("TAG", "Folder name: " + file.getName());
                     }
