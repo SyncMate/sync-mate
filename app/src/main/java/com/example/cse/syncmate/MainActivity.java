@@ -33,6 +33,8 @@ import com.example.cse.syncmate.Send.SendFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.net.SocketException;
+
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView
         .OnNavigationItemSelectedListener {
@@ -119,7 +121,8 @@ public class MainActivity extends AppCompatActivity
                     }).setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         } else {
-            Toast.makeText(this, "Permission already granted", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Permission already granted", Toast.LENGTH_SHORT).show();
+            Log.d("onResume", "Permission already granted");
         }
     }
 

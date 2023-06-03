@@ -1,9 +1,7 @@
 package com.example.cse.syncmate.Send;
 
-import android.os.StrictMode;
+import android.content.Context;
 import android.util.Log;
-
-import com.example.cse.syncmate.Receive.FileReceiver;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -19,13 +17,14 @@ import java.util.Random;
 
 public class FileSender {
 
-    private static int RECEIVER_PORT = 0; // Will be dynamically assigned
+    private static int RECEIVER_PORT = 1024; // Will be dynamically assigned
 
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 5000; // Timeout in milliseconds
 
     private static volatile boolean isPaused = false;
     private static volatile boolean isCancelled = false;
+    public static int receiverPort = 1024;
     public interface FileTransferCallback {
         void onSuccess();
 
@@ -45,9 +44,6 @@ public class FileSender {
     }
 
     public static void sendFile(String ipAddress, File file, FileTransferCallback callback) {
-        // StrictMode
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
 
         int finalReceiverPort = findAvailablePort(1024, 65535);
         new Thread(() -> {
@@ -56,7 +52,6 @@ public class FileSender {
                 InetAddress address = InetAddress.getByName(ipAddress);
 
                 // Create a socket connection
-
                 String address_str = String.valueOf(address);
                 address_str = address_str.replace("/", "");
 
@@ -70,7 +65,7 @@ public class FileSender {
 //                Log.d("File sending listening ip address", String.valueOf(result[1]));
 
                 //TODO - Get receiver port here
-                Socket socket = new Socket(address_str, 1024);
+                Socket socket = new Socket(address_str, receiverPort);
                 Log.d("File sending socket", String.valueOf(socket.getLocalPort()));
 
                 // Retrieve the dynamically assigned port
@@ -143,19 +138,6 @@ public class FileSender {
         }).start();
         // Start listening for heartbeat messages from the receiver
         startHeartbeatListener(finalReceiverPort);
-    }
-
-
-    public static void pauseTransfer() {
-        isPaused = true;
-    }
-
-    public static void resumeTransfer() {
-        isPaused = false;
-    }
-
-    public static void cancelTransfer() {
-        isCancelled = true;
     }
 
     private static int findAvailablePort(int minPortNumber, int maxPortNumber) {
