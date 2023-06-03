@@ -27,9 +27,11 @@ public class FileReceiver {
     static List<String> receivedFilesToPass = new ArrayList<>();
 
     private static Context context;
+
     public FileReceiver(Context context) {
         this.context = context;
     }
+
     public static void main(String[] args) {
 
         Log.d("File Receive", "CAME INTO MAIN CODE");
@@ -132,7 +134,6 @@ public class FileReceiver {
 
                     fos.close();
 
-                    //TODO - add selectedFileName to receiver recycle view
                     Log.d("Received file name", selectedFileName);
                     receivedFiles.add(selectedFileName);
                     // Call the receiveFile() method to update the UI with the received file name
@@ -155,7 +156,7 @@ public class FileReceiver {
             InetAddress senderAddress = socket.getInetAddress();
             String senderIP = senderAddress.getHostAddress();
             String senderDeviceName = senderAddress.getHostName();
-            Toast.makeText(context, senderDeviceName+"is sending files", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, senderDeviceName + "is sending files", Toast.LENGTH_SHORT).show();
 
             Log.d("CHECK RECEIVER FOLDER", String.valueOf(isContain));
             while (isContain == false) {

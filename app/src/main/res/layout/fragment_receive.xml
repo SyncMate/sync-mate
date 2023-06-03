@@ -33,14 +33,28 @@
         android:id="@+id/onGoingSyncTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="190dp"
+        android:layout_marginTop="140dp"
         android:text="Received Files" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/recyclerView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/syncIconImageView"-->
+<!--        android:layout_marginTop="190dp" />-->
+
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/syncIconImageView"
-        android:layout_marginTop="190dp" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="30dp"
+        tools:listitem="@layout/file_list_item"
+        android:elevation="0pt"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="15sp"
+        android:drawSelectorOnTop="false"/>
 
 </FrameLayout>
