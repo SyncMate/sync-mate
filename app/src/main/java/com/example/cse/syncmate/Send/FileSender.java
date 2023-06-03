@@ -21,9 +21,9 @@ public class FileSender {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT = 5000; // Timeout in milliseconds
+    private static boolean isTransferPaused = false; // Flag to indicate if the transfer is paused
+    private static boolean isTransferCancelled = false; // Flag to indicate if the transfer is cancelled
 
-    private static volatile boolean isPaused = false;
-    private static volatile boolean isCancelled = false;
     public static int receiverPort = 1024;
     public interface FileTransferCallback {
         void onSuccess();
@@ -90,32 +90,15 @@ public class FileSender {
                 byte[] buffer = new byte[BUFFER_SIZE];
                 int bytesRead;
                 while ((bytesRead = bis.read(buffer)) != -1) {
-
-                    // Check if the transfer is paused or cancelled
-                    if (isPaused) {
-                        callback.onTransferPaused();
-                        while (isPaused) {
-                            // Wait until resumed or cancelled
-                            if (isCancelled) {
-                                // Clean up and notify the caller about the transfer cancellation
-                                bis.close();
-                                bos.close();
-                                socket.close();
-                                callback.onTransferCancelled();
-                                return;
-                            }
-                            Thread.sleep(TIMEOUT);
+                    if (isTransferPaused) {
+                        // Transfer is paused, wait until resumed or cancelled
+                        while (isTransferPaused && !isTransferCancelled) {
+                            Thread.sleep(1000); // Sleep for 1 second before checking again
                         }
-                        callback.onTransferResumed();
-                    } else if (isCancelled) {
-                        // Clean up and notify the caller about the transfer cancellation
-                        bis.close();
-                        bos.close();
-                        socket.close();
-                        callback.onTransferCancelled();
-                        return;
+                        if (isTransferCancelled) {
+                            break; // Transfer is cancelled, exit the loop
+                        }
                     }
-
                     bos.write(buffer, 0, bytesRead);
                 }
 
@@ -128,18 +111,33 @@ public class FileSender {
 
                 // Notify the caller about the successful file transfer
                 callback.onSuccess();
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
 
                 // Notify the caller about the file transfer failure
                 callback.onFailure(e.getMessage());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
 
         }).start();
         // Start listening for heartbeat messages from the receiver
         startHeartbeatListener(finalReceiverPort);
     }
+    // Method to pause the file transfer
+    public static void pauseTransfer() {
+        isTransferPaused = true;
+    }
 
+    // Method to resume the file transfer
+    public static void resumeTransfer() {
+        isTransferPaused = false;
+    }
+
+    // Method to cancel the file transfer
+    public static void cancelTransfer() {
+        isTransferCancelled = true;
+    }
     private static int findAvailablePort(int minPortNumber, int maxPortNumber) {
         Random random = new Random();
         int portRange = maxPortNumber - minPortNumber + 1;

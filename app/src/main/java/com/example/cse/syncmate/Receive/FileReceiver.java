@@ -1,11 +1,10 @@
 package com.example.cse.syncmate.Receive;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.os.StrictMode;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.cse.syncmate.Send.FileSender;
 
@@ -13,29 +12,28 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class FileReceiver {
 
     private static final int MIN_PORT = 1023;
     private static final int MAX_PORT = 65535;
-    private static final int HEARTBEAT_INTERVAL = 5000; // 5 seconds
     static List<String> receivedFiles = new ArrayList<>();
+    static List<String> receivedFilesToPass = new ArrayList<>();
+    static String name = "";
+    private static Context context;
+    private ReceiveFragment receiveFragment;
+
+    public FileReceiver(Context context) {
+        this.context = context;
+    }
 
     public static void main(String[] args) {
-
-        // StrictMode
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
 
         Log.d("File Receive", "CAME INTO MAIN CODE");
         int port = findAvailablePort();
@@ -56,8 +54,6 @@ public class FileReceiver {
 
             System.out.println("FileReceiver is listening on port " + port);
 
-            // Start the heartbeat thread
-            //startHeartbeatThread(serverSocket, port);
             // Accept incoming connections indefinitely
             while (true) {
                 Log.d("FileReceiver WHILE LOOP", "CAME INSIDE WHILE LOOP");
@@ -66,17 +62,6 @@ public class FileReceiver {
                 Socket socket = serverSocket.accept();
                 Log.d("FileReceiver ACCEPT SERVERSOCKET", String.valueOf(serverSocket.isClosed()));
 
-                // Handle the file transfer
-//                DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-//
-//                //Read the number of files being sent
-//                int numFiles = dataInputStream.readInt();
-//                Log.d("numberInput", String.valueOf(dataInputStream));
-//                for (int i = 0; i < numFiles; i++) {
-//                    //Read the file name
-//                    String fileName = dataInputStream.readUTF();
-//                    handleFileTransfer(socket, fileName);
-//                }
                 handleFileTransfer(socket);
             }
         } catch (IOException e) {
@@ -87,10 +72,9 @@ public class FileReceiver {
 
     private static void handleFileTransfer(Socket socket) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
-//        String saveFilePath = "/storage/emulated/0/Download/SyncMate/Hooks.pdf"; //TODO - Replace with the desired file path
+
         // Specify the directory path to save the received files
-        String saveDirectory = "/storage/emulated/0/Download/SyncMate/";
-        List<Integer> x = new ArrayList<>();
+        String saveDirectory = "/storage/emulated/0/Download/SyncMate/"; //TODO - Replace with the desired file path
         File directory = new File(saveDirectory);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -149,10 +133,13 @@ public class FileReceiver {
                         fos.write(buffer, 0, bytesRead);
                     }
 
-                    // Close the output stream
                     fos.close();
-                    receivedFiles.add(selectedFileName);
 
+                    Log.d("Received file name", selectedFileName);
+                    receivedFiles.add(selectedFileName);
+                    // Call the receiveFile() method to update the UI with the received file name
+
+                    new Handler(Looper.getMainLooper()).post(() -> receiveFile(selectedFileName));
                     // Read a single byte as a signal
                     int signal = bis.read();
                     if (signal == -1 || signal != 1) {
@@ -169,13 +156,20 @@ public class FileReceiver {
 
             InetAddress senderAddress = socket.getInetAddress();
             String senderIP = senderAddress.getHostAddress();
+//            Log.d("Received file sender", senderIP);
+
+//            String senderDeviceName = senderAddress.getHostName();
+//            Log.d("Received file sender", senderDeviceName);
+//            Toast.makeText(context, senderDeviceName + "is sending files", Toast.LENGTH_SHORT).show();
+//            new Handler(Looper.getMainLooper()).post(() -> getName(senderDeviceName));
+
             Log.d("CHECK RECEIVER FOLDER", String.valueOf(isContain));
             while (isContain == false) {
-                for (String file: receiverParentFolder1){
+                for (String file : receiverParentFolder1) {
                     String saveReceivingFilePath1 = parentFolder.getAbsolutePath() + File.separator + file;
                     File fileToSend = new File(saveReceivingFilePath1);
 
-                    if (!receivedFiles.contains(fileToSend.getName())){
+                    if (!receivedFiles.contains(fileToSend.getName())) {
                         FileSender.sendFile(senderIP, fileToSend, new FileSender.FileTransferCallback() {
                             @Override
                             public void onSuccess() {
@@ -196,6 +190,7 @@ public class FileReceiver {
                             public void onTransferCompleted() {
 
                             }
+
                             @Override
                             public void onTransferFailed(String errorMessage) {
 
@@ -226,8 +221,6 @@ public class FileReceiver {
         }
 
         socket.close();
-
-        System.out.println("File received and saved successfully.");
     }
 
     private static int findAvailablePort() {
@@ -244,21 +237,15 @@ public class FileReceiver {
         return -1; // No available ports found
     }
 
-//    private static void startHeartbeatThread(ServerSocket serverSocket, int port) {
-//        Timer timer = new Timer();
-//        timer.scheduleAtFixedRate(new TimerTask() {
-//            @Override
-//            public void run() {
-//                try {
-//                    // Send a heartbeat message to the sender
-//                    Socket heartbeatSocket = new Socket("192.168.8.197", port);
-//                    PrintWriter out = new PrintWriter(heartbeatSocket.getOutputStream(), true);
-//                    out.println("Heartbeat");
-//                    heartbeatSocket.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, 0, HEARTBEAT_INTERVAL);
-//    }
+    private static void receiveFile(String fileName) {
+        receivedFilesToPass.add(fileName);
+
+        // Call the method in the ReceiveFragment to update the UI
+        ReceiveFragment.updateReceivedFiles(receivedFilesToPass);
+    }
+
+    private static void getName(String senderName){
+        name = senderName;
+        ReceiveFragment.senderDeviceNameReceived(name);
+    }
 }
