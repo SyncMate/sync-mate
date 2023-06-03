@@ -1,17 +1,14 @@
 package com.example.cse.syncmate.Receive;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cse.syncmate.R;
 
@@ -25,44 +22,24 @@ import java.util.List;
  */
 public class ReceiveFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    //    private RecyclerView receivedFilesRecyclerView;
-//    private ReceivedFilesAdapter receivedFilesAdapter;
     private static List<String> receivedFiles;
+    private static String sender = "";
     private static ReceiveAdapter fileAdapter;
     private RecyclerView recyclerView;
 
     public ReceiveFragment() {
         // Required empty public constructor
     }
-
-
-    // FileReceivedCallback interface for receiving file received events
-    public interface FileReceivedCallback {
-        void onFileReceived(String fileName);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReceiveFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ReceiveFragment newInstance(String param1, String param2) {
         ReceiveFragment fragment = new ReceiveFragment();
         Bundle args = new Bundle();
@@ -97,15 +74,23 @@ public class ReceiveFragment extends Fragment {
         return view;
     }
 
-    // Method to receive a file and update the UI
-    private void receiveFile(String fileName) {
-        receivedFiles.add(fileName);
-        fileAdapter.addFile(fileName);
-    }
     // Method to update the received files in the UI
     public static void updateReceivedFiles(List<String> files) {
         receivedFiles.clear();
         receivedFiles.addAll(files);
         fileAdapter.notifyDataSetChanged();
     }
+
+    public static void senderDeviceNameReceived (String senderName) {
+        Log.d("Received file", "CAME INSIDE senderDeviceNameReceived");
+        sender.concat(senderName);
+        Log.d("Received file", senderName);
+//        fileAdapter.notifyDataSetChanged();
+    }
+
+//    public void onSenderDeviceNameReceived(String senderDeviceName) {
+//        // Update the UI with the sender device name
+//        fileAdapter.setSenderDeviceName(senderDeviceName);
+//        fileAdapter.notifyDataSetChanged();
+//    }
 }

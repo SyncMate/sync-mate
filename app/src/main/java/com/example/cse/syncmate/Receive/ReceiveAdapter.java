@@ -32,14 +32,6 @@ public class ReceiveAdapter extends RecyclerView.Adapter<ReceiveAdapter.ViewHold
         return new ViewHolder(view);
     }
 
-    public interface FileReceivedCallback {
-        void onFileReceived(String fileName);
-    }
-    private FileReceivedCallback fileReceivedCallback;
-    public void setFileReceivedCallback(FileReceivedCallback callback) {
-        fileReceivedCallback = callback;
-    }
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String fileName = receivedFiles.get(position);

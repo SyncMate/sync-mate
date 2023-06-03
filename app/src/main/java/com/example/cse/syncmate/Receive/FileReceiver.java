@@ -1,8 +1,10 @@
 package com.example.cse.syncmate.Receive;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.cse.syncmate.Send.FileSender;
 
@@ -22,7 +24,12 @@ public class FileReceiver {
     private static final int MIN_PORT = 1023;
     private static final int MAX_PORT = 65535;
     static List<String> receivedFiles = new ArrayList<>();
+    static List<String> receivedFilesToPass = new ArrayList<>();
 
+    private static Context context;
+    public FileReceiver(Context context) {
+        this.context = context;
+    }
     public static void main(String[] args) {
 
         Log.d("File Receive", "CAME INTO MAIN CODE");
@@ -130,12 +137,7 @@ public class FileReceiver {
                     receivedFiles.add(selectedFileName);
                     // Call the receiveFile() method to update the UI with the received file name
 
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            receiveFile(selectedFileName);
-                        }
-                    });
+                    new Handler(Looper.getMainLooper()).post(() -> receiveFile(selectedFileName));
                     // Read a single byte as a signal
                     int signal = bis.read();
                     if (signal == -1 || signal != 1) {
@@ -152,6 +154,9 @@ public class FileReceiver {
 
             InetAddress senderAddress = socket.getInetAddress();
             String senderIP = senderAddress.getHostAddress();
+            String senderDeviceName = senderAddress.getHostName();
+            Toast.makeText(context, senderDeviceName+"is sending files", Toast.LENGTH_SHORT).show();
+
             Log.d("CHECK RECEIVER FOLDER", String.valueOf(isContain));
             while (isContain == false) {
                 for (String file : receiverParentFolder1) {
@@ -210,8 +215,6 @@ public class FileReceiver {
         }
 
         socket.close();
-
-//        System.out.println("File received and saved successfully.");
     }
 
     private static int findAvailablePort() {
@@ -227,9 +230,12 @@ public class FileReceiver {
         }
         return -1; // No available ports found
     }
+
     private static void receiveFile(String fileName) {
-        receivedFiles.add(fileName);
+        receivedFilesToPass.add(fileName);
+
         // Call the method in the ReceiveFragment to update the UI
-        ReceiveFragment.updateReceivedFiles(receivedFiles);
+        ReceiveFragment.updateReceivedFiles(receivedFilesToPass);
     }
+
 }
