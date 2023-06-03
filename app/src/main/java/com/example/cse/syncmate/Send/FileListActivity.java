@@ -1,5 +1,6 @@
 package com.example.cse.syncmate.Send;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -40,13 +41,17 @@ public class FileListActivity extends AppCompatActivity {
             fileName = intent.getStringExtra("fileName");
             Log.i("fileName", fileName);
         }
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        getSupportActionBar().setElevation(0);
 
         List<String> folderNameList = viewFiles(fileName);
 
         if (folderNameList.size() != 0) {
             ListView folderListView = findViewById(R.id.file_list);
 
-            FileAdapter listViewAdapter = new FileAdapter(this, folderNameList, R.drawable.baseline_folder_24);
+            FileAdapter listViewAdapter = new FileAdapter(this, folderNameList);
             folderListView.setAdapter(listViewAdapter);
         } else {
             setContentView(R.layout.empty_folder);

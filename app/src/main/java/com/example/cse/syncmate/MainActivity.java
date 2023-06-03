@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.custom_action_bar);
         getSupportActionBar().setElevation(0);
-        View view =getSupportActionBar().getCustomView();
 
         // Call the FileReceiver main method in a separate thread
         new Thread(new Runnable() {
