@@ -1,6 +1,7 @@
 package com.example.cse.syncmate;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
@@ -14,20 +15,23 @@ import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.example.cse.syncmate.History.HistoryFragment;
 import com.example.cse.syncmate.Receive.FileReceiver;
 import com.example.cse.syncmate.Receive.ReceiveFragment;
+import com.example.cse.syncmate.Send.FolderCreateActivity;
 import com.example.cse.syncmate.Send.SendFragment;
-import com.example.cse.syncmate.Settings.SettingsFragment;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.net.SocketException;
 
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity
         .OnNavigationItemSelectedListener {
 
     BottomNavigationView bottomNavigationView;
+    FloatingActionButton fab;
 
     private Uri fileUri;
 //    private final ActivityResultLauncher<String> filePickerLauncher = registerForActivityResult(
@@ -67,6 +72,21 @@ public class MainActivity extends AppCompatActivity
         bottomNavigationView
                 .setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.send);
+        fab = findViewById(R.id.add_folders);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FolderCreateActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        getSupportActionBar().setElevation(0);
+        View view =getSupportActionBar().getCustomView();
 
         // Call the FileReceiver main method in a separate thread
         new Thread(new Runnable() {
@@ -195,10 +215,9 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
+
     SendFragment send = new SendFragment();
     ReceiveFragment receive = new ReceiveFragment();
-    HistoryFragment history = new HistoryFragment();
-    SettingsFragment settings = new SettingsFragment();
 
     @Override
     public boolean
@@ -216,20 +235,6 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.flFragment, receive)
-                        .commit();
-                return true;
-
-            case R.id.history:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.flFragment, history)
-                        .commit();
-                return true;
-
-            case R.id.settings:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.flFragment, settings)
                         .commit();
                 return true;
         }
