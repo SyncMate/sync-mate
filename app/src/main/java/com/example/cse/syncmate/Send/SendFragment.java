@@ -12,9 +12,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.cse.syncmate.R;
+import com.example.cse.syncmate.Send.Adapter.FileAdapter;
 import com.example.cse.syncmate.Send.Adapter.FolderAdapter;
 
 import java.io.File;
@@ -39,6 +42,8 @@ public class SendFragment extends Fragment {
     private ExecutorService executor;
     private String syncMateFolderPath;
     private Path syncMateDir;
+    private ImageView emptyFolderView;
+    private TextView emptyFoldertxt;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,18 +72,19 @@ public class SendFragment extends Fragment {
 
         // Display folders in SyncMate folder
         folderNameList = viewFolders(syncMateFolderPath);
-
         folderListView = view.findViewById(R.id.list);
 
         listViewAdapter = new FolderAdapter(getContext(), folderNameList, R.drawable.baseline_folder_24, R.drawable.baseline_sync_24);
         folderListView.setAdapter(listViewAdapter);
-//        folderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                // TODO: view folder content
-//            }
-//        });
 
+        emptyFolderView = view.findViewById(R.id.empty_folder);
+        emptyFoldertxt = view.findViewById(R.id.empty_folder_txt);
+
+
+        if (folderNameList.size() == 0) {
+            emptyFolderView.setVisibility(View.VISIBLE);
+            emptyFoldertxt.setVisibility(View.VISIBLE);
+        }
         /** Display changes in SyncMate Directory in real time */
 
         // Create a WatchService instance to monitor the SyncMate directory for new folders
@@ -120,6 +126,8 @@ public class SendFragment extends Fragment {
                                         @Override
                                         public void run() {
                                             listViewAdapter.notifyDataSetChanged();
+                                            emptyFolderView.setVisibility(View.GONE);
+                                            emptyFoldertxt.setVisibility(View.GONE);
                                         }
                                     });
                                 }
