@@ -10,44 +10,63 @@
         android:id="@+id/senderNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
         android:text="Sender" />
+<!--    android:layout_toEndOf="@id/syncIconImageView"-->
 
+<!--    <TextView-->
+<!--        android:id="@+id/receiverNameTextView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="end|center_vertical"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:layout_marginLeft="30dp"-->
+<!--        android:text="Me" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/senderIconImageView"-->
+<!--        android:layout_width="65dp"-->
+<!--        android:layout_height="65dp"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:src="@drawable/baseline_sync_24" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/syncIconImageView"-->
+<!--        android:layout_width="65dp"-->
+<!--        android:layout_height="65dp"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:src="@drawable/baseline_sync_24" />-->
+    <!--        android:layout_centerInParent="false"-->
+    <!--        android:layout_centerHorizontal="true"-->
     <TextView
-        android:id="@+id/receiverNameTextView"
+        android:id="@+id/receivedFilesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/senderNameTextView"
-        android:layout_marginTop="41dp"
-        android:text="Receive" />
-
-    <ImageView
-        android:id="@+id/syncIconImageView"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_centerInParent="false"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/baseline_sync_24" />
-
+        android:layout_gravity="center"
+        android:text="No ongoing syncing currently!!"
+        android:textSize="18sp"
+        android:visibility="gone" />
     <TextView
-        android:id="@+id/onGoingSyncTextView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
-        android:text="Received Files" />
-
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/recyclerView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/syncIconImageView"-->
-<!--        android:layout_marginTop="190dp" />-->
+        android:layout_height="match_parent"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20pt"
+        android:text="Received Files"
+        android:textColor="@color/font_dark"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="90dp"
         android:layout_marginLeft="30dp"
         android:layout_marginBottom="20dp"
         android:layout_marginRight="30dp"

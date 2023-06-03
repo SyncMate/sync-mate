@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,13 +29,17 @@ public class ReceiveFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private static List<String> receivedFiles;
-    private static String sender = "";
+    private static String sender;
     private static ReceiveAdapter fileAdapter;
+    private static SenderNameAdapter senderNameAdapter;
     private RecyclerView recyclerView;
+    private TextView senderDevice;
 
+    //    private SenderNameAdapter senderNameAdapter;
     public ReceiveFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -65,27 +70,38 @@ public class ReceiveFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_receive, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
 
+        senderDevice = view.findViewById(R.id.senderNameTextView);
+
         // Set up the RecyclerView with an empty list initially
         receivedFiles = new ArrayList<>();
+        sender = "";
         fileAdapter = new ReceiveAdapter(receivedFiles);
+        senderNameAdapter = new SenderNameAdapter(sender);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(fileAdapter);
-
+        senderDevice.setText(sender);
         return view;
     }
 
     // Method to update the received files in the UI
     public static void updateReceivedFiles(List<String> files) {
-        receivedFiles.clear();
-        receivedFiles.addAll(files);
-        fileAdapter.notifyDataSetChanged();
+        if (receivedFiles != null && fileAdapter != null) {
+            receivedFiles.clear();
+            receivedFiles.addAll(files);
+            fileAdapter.notifyDataSetChanged();
+        }
     }
 
-    public static void senderDeviceNameReceived (String senderName) {
+    public static void senderDeviceNameReceived(String senderName) {
         Log.d("Received file", "CAME INSIDE senderDeviceNameReceived");
-        sender.concat(senderName);
+        sender = senderName;
         Log.d("Received file", senderName);
+        senderNameAdapter.notifyDataSetChanged();
 //        fileAdapter.notifyDataSetChanged();
+    }
+
+    void updateSenderName(String senderDeviceName) {
+        senderDevice.setText(senderDeviceName);
     }
 
 //    public void onSenderDeviceNameReceived(String senderDeviceName) {

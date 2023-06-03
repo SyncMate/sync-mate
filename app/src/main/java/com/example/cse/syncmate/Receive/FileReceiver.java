@@ -25,8 +25,9 @@ public class FileReceiver {
     private static final int MAX_PORT = 65535;
     static List<String> receivedFiles = new ArrayList<>();
     static List<String> receivedFilesToPass = new ArrayList<>();
-
+    static String name = "";
     private static Context context;
+    private ReceiveFragment receiveFragment;
 
     public FileReceiver(Context context) {
         this.context = context;
@@ -155,8 +156,12 @@ public class FileReceiver {
 
             InetAddress senderAddress = socket.getInetAddress();
             String senderIP = senderAddress.getHostAddress();
-            String senderDeviceName = senderAddress.getHostName();
-            Toast.makeText(context, senderDeviceName + "is sending files", Toast.LENGTH_SHORT).show();
+//            Log.d("Received file sender", senderIP);
+
+//            String senderDeviceName = senderAddress.getHostName();
+//            Log.d("Received file sender", senderDeviceName);
+//            Toast.makeText(context, senderDeviceName + "is sending files", Toast.LENGTH_SHORT).show();
+//            new Handler(Looper.getMainLooper()).post(() -> getName(senderDeviceName));
 
             Log.d("CHECK RECEIVER FOLDER", String.valueOf(isContain));
             while (isContain == false) {
@@ -239,4 +244,8 @@ public class FileReceiver {
         ReceiveFragment.updateReceivedFiles(receivedFilesToPass);
     }
 
+    private static void getName(String senderName){
+        name = senderName;
+        ReceiveFragment.senderDeviceNameReceived(name);
+    }
 }
