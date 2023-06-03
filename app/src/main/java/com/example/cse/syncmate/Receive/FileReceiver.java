@@ -1,5 +1,7 @@
 package com.example.cse.syncmate.Receive;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.cse.syncmate.Send.FileSender;
@@ -127,7 +129,13 @@ public class FileReceiver {
                     Log.d("Received file name", selectedFileName);
                     receivedFiles.add(selectedFileName);
                     // Call the receiveFile() method to update the UI with the received file name
-                    receiveFile(selectedFileName);
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            receiveFile(selectedFileName);
+                        }
+                    });
                     // Read a single byte as a signal
                     int signal = bis.read();
                     if (signal == -1 || signal != 1) {
