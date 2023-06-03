@@ -4,27 +4,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_marginVertical="10dp"
     android:layout_marginHorizontal="10dp"
-    android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
     android:background="@drawable/list_item_background"
     android:layout_height="60dp">
 
     <ImageView
-        android:id="@+id/folderImage"
+        android:id="@+id/fileImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_margin="10dp"
         android:layout_centerVertical="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
         android:background="@drawable/file_background"
         android:src="@drawable/baseline_insert_drive_file_24" />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:id="@+id/folderName"
+        android:id="@+id/fileNameTextView"
         android:text="Name"
         android:textColor="@color/font_dark"
         android:textSize="15sp"
@@ -35,5 +31,12 @@
         android:layout_marginEnd="10dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:layout_toEndOf="@id/folderImage"/>
+        android:layout_toEndOf="@id/fileImageView"/>
+
+    <TextView
+        android:id="@+id/senderNameTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
 </RelativeLayout>

@@ -1,14 +1,20 @@
 package com.example.cse.syncmate.Receive;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cse.syncmate.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,28 +23,28 @@ import com.example.cse.syncmate.R;
  */
 public class ReceiveFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private static List<String> receivedFiles;
+    private static String sender;
+    private static ReceiveAdapter fileAdapter;
+    private static SenderNameAdapter senderNameAdapter;
+    private RecyclerView recyclerView;
+    private TextView senderDevice;
 
+    //    private SenderNameAdapter senderNameAdapter;
     public ReceiveFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReceiveFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     public static ReceiveFragment newInstance(String param1, String param2) {
         ReceiveFragment fragment = new ReceiveFragment();
         Bundle args = new Bundle();
@@ -61,6 +67,46 @@ public class ReceiveFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_receive, container, false);
+        View view = inflater.inflate(R.layout.fragment_receive, container, false);
+        recyclerView = view.findViewById(R.id.recyclerView);
+
+        senderDevice = view.findViewById(R.id.senderNameTextView);
+
+        // Set up the RecyclerView with an empty list initially
+        receivedFiles = new ArrayList<>();
+        sender = "";
+        fileAdapter = new ReceiveAdapter(receivedFiles);
+        senderNameAdapter = new SenderNameAdapter(sender);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(fileAdapter);
+        senderDevice.setText(sender);
+        return view;
     }
+
+    // Method to update the received files in the UI
+    public static void updateReceivedFiles(List<String> files) {
+        if (receivedFiles != null && fileAdapter != null) {
+            receivedFiles.clear();
+            receivedFiles.addAll(files);
+            fileAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public static void senderDeviceNameReceived(String senderName) {
+        Log.d("Received file", "CAME INSIDE senderDeviceNameReceived");
+        sender = senderName;
+        Log.d("Received file", senderName);
+        senderNameAdapter.notifyDataSetChanged();
+//        fileAdapter.notifyDataSetChanged();
+    }
+
+    void updateSenderName(String senderDeviceName) {
+        senderDevice.setText(senderDeviceName);
+    }
+
+//    public void onSenderDeviceNameReceived(String senderDeviceName) {
+//        // Update the UI with the sender device name
+//        fileAdapter.setSenderDeviceName(senderDeviceName);
+//        fileAdapter.notifyDataSetChanged();
+//    }
 }
