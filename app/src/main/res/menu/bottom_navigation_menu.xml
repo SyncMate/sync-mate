@@ -3,21 +3,17 @@
     <item
         android:id="@+id/send"
         android:enabled="true"
-        android:icon="@drawable/ic_send"
+        android:icon="@drawable/ic_send_file"
         android:title="@string/send"/>
+    <item
+        android:id="@+id/add"
+        android:title=""
+        android:enabled="true"/>
+
     <item
         android:id="@+id/receive"
         android:enabled="true"
         android:icon="@drawable/ic_receive"
         android:title="@string/receive"/>
-    <item
-        android:id="@+id/history"
-        android:enabled="true"
-        android:icon="@drawable/ic_history"
-        android:title="@string/history"/>
-    <item
-        android:id="@+id/settings"
-        android:enabled="true"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/settings"/>
+
 </menu>
