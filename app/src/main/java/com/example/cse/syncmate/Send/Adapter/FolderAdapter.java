@@ -177,9 +177,9 @@ public class FolderAdapter extends ArrayAdapter<String> {
                                                 }
                                             };
 
-                            // Call the handleFileTransfer method and pass the file path
-                            FileSender.sendFile(selectedDeviceIP,fileToSend,callback);
-//                            fileSenderActivity.handleFileTransfer(Uri.fromFile(fileToSend), selectedDeviceIP);
+                                            // Call the handleFileTransfer method and pass the file path
+                                            FileSender.sendFile(selectedDeviceIP,fileToSend,callback);
+                                            //fileSenderActivity.handleFileTransfer(Uri.fromFile(fileToSend), selectedDeviceIP);
                                             Log.d("WifiDeviceScanner", "AFTER SENDING FILE");
                                         }
                                     } catch (Exception e) {
