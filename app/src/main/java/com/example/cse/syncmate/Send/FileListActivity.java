@@ -142,6 +142,7 @@ public class FileListActivity extends AppCompatActivity {
                 String fileName = getFileName(uri);
                 copyFileToFolder(uri, createdFolder, fileName);
             }
+            onBackPressed();
         }
     }
 

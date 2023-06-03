@@ -1,5 +1,6 @@
 package com.example.cse.syncmate.Send;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -43,6 +44,11 @@ public class FolderCreateActivity extends AppCompatActivity {
         createFolder = findViewById(R.id.folder_create_button);
         editFolderName = findViewById(R.id.folder_name);
         selectFolder = findViewById(R.id.select_folder_button);
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        getSupportActionBar().setElevation(0);
 
         // Create a folder in SyncMate folder
         createFolder.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +98,6 @@ public class FolderCreateActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog.dismiss();
                 openFileChooser();
-//                finish();
             }
         });
         cancelText.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +129,8 @@ public class FolderCreateActivity extends AppCompatActivity {
                 String fileName = getFileName(uri);
                 copyFileToFolder(uri, createdFolder, fileName);
             }
+            // Redirect to previous page
+            onBackPressed();
         }
         else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COPY_FOLDER) {
             Uri uri = data.getData();
@@ -131,6 +138,8 @@ public class FolderCreateActivity extends AppCompatActivity {
             if (pickedDir != null) {
                 copyDirectory(pickedDir);
             }
+            // Redirect to previous page
+            onBackPressed();
         }
     }
 
