@@ -2,13 +2,21 @@ package com.example.cse.syncmate.Receive;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.cse.syncmate.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,9 +33,25 @@ public class ReceiveFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    //    private RecyclerView receivedFilesRecyclerView;
+//    private ReceivedFilesAdapter receivedFilesAdapter;
+    private static List<String> receivedFiles;
+    private static ReceiveAdapter fileAdapter;
+    private RecyclerView recyclerView;
 
     public ReceiveFragment() {
         // Required empty public constructor
+    }
+
+
+    // FileReceivedCallback interface for receiving file received events
+    public interface FileReceivedCallback {
+        void onFileReceived(String fileName);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     /**
@@ -61,6 +85,27 @@ public class ReceiveFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_receive, container, false);
+        View view = inflater.inflate(R.layout.fragment_receive, container, false);
+        recyclerView = view.findViewById(R.id.recyclerView);
+
+        // Set up the RecyclerView with an empty list initially
+        receivedFiles = new ArrayList<>();
+        fileAdapter = new ReceiveAdapter(receivedFiles);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(fileAdapter);
+
+        return view;
+    }
+
+    // Method to receive a file and update the UI
+    private void receiveFile(String fileName) {
+        receivedFiles.add(fileName);
+        fileAdapter.addFile(fileName);
+    }
+    // Method to update the received files in the UI
+    public static void updateReceivedFiles(List<String> files) {
+        receivedFiles.clear();
+        receivedFiles.addAll(files);
+        fileAdapter.notifyDataSetChanged();
     }
 }
