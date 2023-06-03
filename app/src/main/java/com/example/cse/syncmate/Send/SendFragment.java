@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.example.cse.syncmate.R;
@@ -30,7 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SendFragment extends Fragment {
-    private Button createFolderBtn;
+//    private ImageButton createFolderBtn;
     private ListView folderListView;
     private List<String> folderNameList;
     private FolderAdapter listViewAdapter;
@@ -51,17 +52,18 @@ public class SendFragment extends Fragment {
         // Create SyncMate folder in Download directory
         createSyncMateFolder(syncMateFolderPath);
 
-        createFolderBtn = view.findViewById(R.id.folder_create_button);
-        createFolderBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                FolderCreateFragment folderCreateFragment = new
-//                        FolderCreateFragment();
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.send_frag, folderCreateFragment).commit();
-                Intent i = new Intent(getContext(), FolderCreateActivity.class);
-                startActivity(i);
-            }
-        });
+
+//        createFolderBtn = view.findViewById(R.id.folder_create_button);
+//        createFolderBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                FolderCreateFragment folderCreateFragment = new
+////                        FolderCreateFragment();
+////                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.send_frag, folderCreateFragment).commit();
+//                Intent i = new Intent(getContext(), FolderCreateActivity.class);
+//                startActivity(i);
+//            }
+//        });
 
         // Display folders in SyncMate folder
         folderNameList = viewFolders(syncMateFolderPath);
@@ -70,12 +72,12 @@ public class SendFragment extends Fragment {
 
         listViewAdapter = new FolderAdapter(getContext(), folderNameList, R.drawable.baseline_folder_24, R.drawable.baseline_sync_24);
         folderListView.setAdapter(listViewAdapter);
-        folderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // TODO: view folder content
-            }
-        });
+//        folderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                // TODO: view folder content
+//            }
+//        });
 
         /** Display changes in SyncMate Directory in real time */
 

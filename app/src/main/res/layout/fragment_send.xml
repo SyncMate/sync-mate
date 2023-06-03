@@ -26,18 +26,13 @@
         android:layout_marginLeft="30dp"
         android:layout_marginBottom="20dp"
         android:layout_marginRight="30dp"
+        android:scrollbars="none"
         tools:listitem="@layout/list_item"
+        android:outlineAmbientShadowColor="@android:color/transparent"
+        android:outlineSpotShadowColor="@android:color/transparent"
         android:elevation="0pt"
         android:divider="@android:color/transparent"
         android:dividerHeight="15sp"
         android:drawSelectorOnTop="false"/>
-
-    <Button
-        android:id="@+id/folder_create_button"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="click"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

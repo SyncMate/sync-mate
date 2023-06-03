@@ -1,59 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<RelativeLayout
+    android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/tools"
-    android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
     android:layout_marginVertical="10dp"
     android:layout_marginHorizontal="10dp"
-    app:cardCornerRadius="10dp"
-    card_view:cardElevation="0dp"
-    android:background="@color/white"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:background="@drawable/list_item_background"
+    android:layout_height="60dp">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/folderImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/folder_background"
+        android:src="@drawable/baseline_folder_24" />
+
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="40dp"
+        android:id="@+id/folderName"
+        android:text="Name"
+        android:textColor="@color/font_dark"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="55dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_toEndOf="@id/folderImage"/>
 
-        <ImageView
-            android:id="@+id/folderImage"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/folder_background"
-            android:src="@drawable/baseline_folder_24" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:id="@+id/folderName"
-            android:text="Name"
-            android:textColor="@color/font_dark"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:gravity="center_vertical"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="55dp"
-            android:layout_toEndOf="@id/folderImage"/>
-
-        <ImageButton
-            android:id="@+id/sync_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_centerVertical="true"
-            android:contentDescription="sync_btn"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/sync_ic_bgn"
-            android:src="@drawable/baseline_sync_24" />
-    </RelativeLayout>
-
-</androidx.cardview.widget.CardView>
+    <ImageButton
+        android:id="@+id/sync_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        android:layout_centerVertical="true"
+        android:contentDescription="sync_btn"
+        android:background="@drawable/sync_ic_bgn"
+        android:src="@drawable/baseline_sync_24" />
+</RelativeLayout>
