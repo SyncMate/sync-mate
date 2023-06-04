@@ -42,10 +42,13 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
         android:layout_centerVertical="true"
-        android:contentDescription="sync_btn"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/sync_ic_bgn"
+        android:contentDescription="sync_btn"
         android:src="@drawable/baseline_sync_24" />
 
     <ImageButton
@@ -57,6 +60,6 @@
         android:layout_centerVertical="true"
         android:contentDescription="cancel_btn"
         android:background="@drawable/sync_ic_bgn"
-        android:src="@drawable/baseline_cancel_schedule_send_24"
+        android:src="@drawable/baseline_stop_sync_24"
         android:visibility="gone"/>
 </RelativeLayout>

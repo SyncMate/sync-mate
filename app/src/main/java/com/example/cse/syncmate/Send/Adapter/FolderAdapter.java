@@ -127,8 +127,8 @@ public class FolderAdapter extends ArrayAdapter<String> {
                             builder.setItems(deviceNames.toArray(new String[0]), (dialog, which) -> {
                                 String selectedDeviceName = deviceNames.get(which);
                                 String selectedDeviceIP = deviceIPs.get(which);
-                                Toast.makeText(getContext(), "Selected device: " + selectedDeviceName, Toast.LENGTH_SHORT).show();
-                                Toast.makeText(getContext(), "Selected device IP: " + selectedDeviceIP, Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getContext(), "Selected device: " + selectedDeviceName, Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getContext(), "Selected device IP: " + selectedDeviceIP, Toast.LENGTH_SHORT).show();
 
                                 toggleCancelButtonVisibility(cancelButton);
                                 new Thread(() -> {
