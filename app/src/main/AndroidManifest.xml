@@ -33,8 +33,6 @@
         <activity
             android:name=".Send.FolderCreateActivity"
             android:exported="false" />
-<!--        <activity android:name=".Send.FileSenderActivity"-->
-<!--            android:exported="false"/>-->
         <activity
             android:name=".MainActivity"
             android:exported="true">

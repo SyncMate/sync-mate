@@ -16,8 +16,6 @@ import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +48,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        Log.d("WifiDeviceScanner", "ENTER TO SCANFORDEVICES METHOD");
         List<List<String>> devices = new ArrayList<>();
-        Log.d("WifiDeviceScanner", "PASSED GET CONTEXT");
         int batchSize = 10; // Number of IP addresses to process in each batch
         int numBatches = 255 / batchSize;
         if (255 % batchSize != 0) {
@@ -77,7 +73,6 @@ public class WifiDeviceScanner extends AppCompatActivity {
             ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 
             if (wifiManager.isWifiEnabled()) {
-                Log.d("WifiDeviceScanner", "WIFI ENABLED DEVICE");
                 WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                 Log.d("WifiDeviceScanner IP ADDRESS", String.valueOf(wifiInfo.getIpAddress()));
                 int ipAddress = wifiInfo.getIpAddress();
@@ -91,7 +86,6 @@ public class WifiDeviceScanner extends AppCompatActivity {
                     int end = Math.min(start + batchSize - 1, 255);
 
                     for (int i = start; i <= end; i++) {
-//                for (int i = 1; i <= 255; i++) {
                         String address = subnet + i;
                         if (address.equals(accessPointIp) || address.equals(ipString)) {
                             continue;
@@ -101,10 +95,8 @@ public class WifiDeviceScanner extends AppCompatActivity {
                             try {
                                 Log.d("WifiDeviceScanner i VALUE", String.valueOf(finalI));
                                 InetAddress inetAddress = InetAddress.getByName(address);
-                                Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
                                 if (inetAddress.isReachable(250)) {
                                     List<String> innerListDevice = new ArrayList<>();
-                                    Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
 
                                     innerListDevice.add(inetAddress.getHostName());
                                     innerListDevice.add(address);
@@ -112,7 +104,6 @@ public class WifiDeviceScanner extends AppCompatActivity {
                                     synchronized (devices) {
                                         devices.add(innerListDevice);
                                     }
-//                                devices.add(innerListDevice);
                                     Log.d("WifiDeviceScanner", "ADDED DEVICE TO LIST");
                                 }
 
@@ -142,14 +133,5 @@ public class WifiDeviceScanner extends AppCompatActivity {
         return devices;
     }
 
-    // TODO - 1. UI: select device for syncing (Model pop up with available devices) - Done initially
-    // TODO - 2. Put multi threads on device scanner - Done
-//    Deferrable work
-//    Example
-//    An app wants to regularly sync data with a backend. The user does not trigger the sync, and the work should take place when the device is idle. The recommended approach is to use a PeriodicWorkRequest with a custom Worker and constraints for these scenarios.
-//    https://developer.android.com/topic/libraries/architecture/workmanager/how-to/define-work#schedule_periodic_work
-
-    // TODO - 3. When Wifi disabled while syncing, stop scanning
-    // TODO - 4. Permission issue (refine the solution) - Done
 }
 

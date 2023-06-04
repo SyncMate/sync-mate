@@ -89,6 +89,7 @@ public class FolderCreateActivity extends AppCompatActivity {
             }
         }
     }
+
     private void openDialogBox() {
         Dialog dialog = new Dialog(FolderCreateActivity.this);
         dialog.setContentView(R.layout.dialog_layout);
@@ -120,7 +121,7 @@ public class FolderCreateActivity extends AppCompatActivity {
             return;
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COPY_FILES) {
-            File createdFolder = new File (SYNCMATE_FOLDER_PATH, createdFolderName);
+            File createdFolder = new File(SYNCMATE_FOLDER_PATH, createdFolderName);
             if (data.getClipData() != null) {
                 for (int i = 0; i < data.getClipData().getItemCount(); i++) {
                     Uri uri = data.getClipData().getItemAt(i).getUri();
@@ -134,8 +135,7 @@ public class FolderCreateActivity extends AppCompatActivity {
             }
             // Redirect to previous page
             onBackPressed();
-        }
-        else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COPY_FOLDER) {
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COPY_FOLDER) {
             Uri uri = data.getData();
             DocumentFile pickedDir = DocumentFile.fromTreeUri(this, uri);
             if (pickedDir != null) {
@@ -146,7 +146,7 @@ public class FolderCreateActivity extends AppCompatActivity {
         }
     }
 
-    private void openFileChooser(){
+    private void openFileChooser() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -201,7 +201,7 @@ public class FolderCreateActivity extends AppCompatActivity {
 
     private void copyDirectory(DocumentFile sourceDirectory) {
         String displayName = sourceDirectory.getName();
-        File destinationFolder = new File(SYNCMATE_FOLDER_PATH,displayName);
+        File destinationFolder = new File(SYNCMATE_FOLDER_PATH, displayName);
 
         if (!destinationFolder.exists()) {
             destinationFolder.mkdirs();
@@ -209,7 +209,7 @@ public class FolderCreateActivity extends AppCompatActivity {
         for (DocumentFile sourceFile : sourceDirectory.listFiles()) {
             String fileName = sourceFile.getName();
             Uri sourceUri = sourceFile.getUri();
-            copyFileToFolder(sourceUri,destinationFolder, fileName);
+            copyFileToFolder(sourceUri, destinationFolder, fileName);
         }
     }
 }

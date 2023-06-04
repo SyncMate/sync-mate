@@ -37,7 +37,6 @@ public class FolderAdapter extends ArrayAdapter<String> {
     private boolean isCancelButtonVisible = false;
     private FileSender.FileTransferCallback currentCallback;
     private volatile boolean isTransferCancelled = false; // Flag variable to indicate if transfer is cancelled
-    private Thread fileTransferThread; // Thread for file transfer
 
     public FolderAdapter(Context context, List<String> items, int iconResource1, int iconResource2) {
         super(context, 0, items);
@@ -111,7 +110,6 @@ public class FolderAdapter extends ArrayAdapter<String> {
                     } else {
                         handler.post(() -> {
                             Log.d("WifiDeviceScanner NO ELIGIBILE LIST", String.valueOf(eligibleDevices.size()) + eligibleDevices);
-//                            Toast.makeText(getContext(), "Eligible devices: " + eligibleDevices, Toast.LENGTH_SHORT).show();
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialogStyle);
                             builder.setTitle("Select a device to sync with");
@@ -125,17 +123,11 @@ public class FolderAdapter extends ArrayAdapter<String> {
                             }
                             Log.d("WifiDeviceScanner Device IP", deviceIPs.toString());
                             builder.setItems(deviceNames.toArray(new String[0]), (dialog, which) -> {
-                                String selectedDeviceName = deviceNames.get(which);
                                 String selectedDeviceIP = deviceIPs.get(which);
-//                                Toast.makeText(getContext(), "Selected device: " + selectedDeviceName, Toast.LENGTH_SHORT).show();
-//                                Toast.makeText(getContext(), "Selected device IP: " + selectedDeviceIP, Toast.LENGTH_SHORT).show();
 
                                 toggleCancelButtonVisibility(cancelButton);
                                 new Thread(() -> {
                                     try {
-                                        Log.d("Cancel before toggle", "BEFORE TOGGLE");
-
-                                        Log.d("WifiDeviceScanner", "BEFORE FILE PATH");
 
                                         // Get the directory where your app can store files
                                         String path = "/storage/emulated/0/Download/SyncMate/";
@@ -154,9 +146,7 @@ public class FolderAdapter extends ArrayAdapter<String> {
                                         for (File fileName : files) {
                                             Log.d("Cancel variable", String.valueOf(isTransferCancelled));
                                             if (isTransferCancelled) {
-                                                //may be add toggle here
                                                 cancelButton.setVisibility(View.GONE);
-//                                                toggleCancelButtonVisibility(cancelButton);
                                                 Log.d("Cancel loop", "CANCEL THE TRANSFER");
                                                 break; // Break the loop if transfer is cancelled
                                             }
@@ -218,25 +208,20 @@ public class FolderAdapter extends ArrayAdapter<String> {
 
                                                 // Call the handleFileTransfer method and pass the file path
                                                 FileSender.sendFile(selectedDeviceIP, fileToSend, currentCallback);
-                                                //fileSenderActivity.handleFileTransfer(Uri.fromFile(fileToSend), selectedDeviceIP);
                                                 Log.d("Cancel before delay", "AFTER SENDING FILE");
-                                            }); // 1000 milliseconds delay (adjust as needed)
+                                            });
                                             try {
-                                                Thread.sleep(5000); // Delay between file transfers (adjust as needed)
+                                                Thread.sleep(5000); // Delay between file transfers
                                             } catch (InterruptedException e) {
                                                 e.printStackTrace();
                                             }
                                         }
                                         //toggle button original position
                                         if (!isTransferCancelled)
-                                            handler.post(() -> toggleCancelButtonVisibility(cancelButton)); //not working when cancel is happening
-//                                        handler.post(() -> cancelButton.setVisibility(View.GONE));
+                                            handler.post(() -> toggleCancelButtonVisibility(cancelButton));
                                     } catch (Exception e) {
                                         Log.d("WifiDeviceScanner", String.valueOf(e));
-                                        Log.d("WifiDeviceScanner", "Error in sending file");
-//                                        syncImage.setVisibility(View.VISIBLE);
                                         cancelButton.setVisibility(View.GONE);
-//                                        toggleCancelButtonVisibility(cancelButton);
                                     }
                                     handler.post(() -> progressDialog.dismiss());
                                 }).start();
@@ -249,7 +234,6 @@ public class FolderAdapter extends ArrayAdapter<String> {
                     }
                 } catch (Exception e) {
                     Log.d("WifiDeviceScanner", String.valueOf(e));
-                    Log.d("WifiDeviceScanner", "Error in initializing WifiDeviceScanner");
                     progressDialog.dismiss();
                 }
             }).start();

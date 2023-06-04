@@ -17,10 +17,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,11 +27,8 @@ import com.example.cse.syncmate.Receive.FileReceiver;
 import com.example.cse.syncmate.Receive.ReceiveFragment;
 import com.example.cse.syncmate.Send.FolderCreateActivity;
 import com.example.cse.syncmate.Send.SendFragment;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.net.SocketException;
 
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView
@@ -42,25 +36,6 @@ public class MainActivity extends AppCompatActivity
 
     BottomNavigationView bottomNavigationView;
     FloatingActionButton fab;
-
-    private Uri fileUri;
-//    private final ActivityResultLauncher<String> filePickerLauncher = registerForActivityResult(
-//            new ActivityResultContracts.OpenDocument(),
-//            result -> {
-//                if (result != null) {
-//                    fileUri = result;
-//                    Log.d("TAG", "Selected File URI: " + fileUri.toString());
-//
-//                    // Continue with file transfer or other operations
-//                    // Call the method to handle the file transfer with the selected file URI
-//                    handleFileTransfer(fileUri);
-//                } else {
-//                    // File selection canceled by the user
-//                    Log.d("TAG", "File selection canceled");
-//                }
-//            }
-//    );
-
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -98,9 +73,6 @@ public class MainActivity extends AppCompatActivity
                 FileReceiver.main(new String[]{});
             }
         }).start();
-
-//        openFilePicker();
-
     }
 
     @Override
@@ -126,7 +98,6 @@ public class MainActivity extends AppCompatActivity
                     }).setIcon(R.drawable.round_warning_24)
                     .show();
         } else {
-//            Toast.makeText(this, "Permission already granted", Toast.LENGTH_SHORT).show();
             Log.d("onResume", "Permission already granted");
         }
     }
@@ -165,20 +136,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //    private void openFilePicker() {
-//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//        intent.addCategory(Intent.CATEGORY_OPENABLE);
-//        intent.setType("*/*");
-//        filePickerLauncher.launch(intent);
-//    }
-
     private void handleFileTransfer(Uri fileUri) {
         // Convert the file URI to a file path if needed
         String filePath = getFilePathFromUri(fileUri);
         Log.d("File Picker", "File Path: " + filePath);
-
-        // Continue with the file transfer process
-        // ...
     }
 
     private String getFilePathFromUri(Uri uri) {
