@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity
 //    );
 
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +87,8 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                .getColor(R.color.app_background)));
         getSupportActionBar().setElevation(0);
 
         // Call the FileReceiver main method in a separate thread
@@ -106,6 +110,7 @@ public class MainActivity extends AppCompatActivity
             new AlertDialog.Builder(this)
                     .setTitle("All files permission")
                     .setMessage("This app requires all files permission")
+                    .setCancelable(false)
                     .setPositiveButton("Allow", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -115,9 +120,10 @@ public class MainActivity extends AppCompatActivity
                     .setNegativeButton("Deny", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                            finish();
+                            System.exit(0);
                         }
-                    }).setIcon(android.R.drawable.ic_dialog_alert)
+                    }).setIcon(R.drawable.round_warning_24)
                     .show();
         } else {
 //            Toast.makeText(this, "Permission already granted", Toast.LENGTH_SHORT).show();
