@@ -31,11 +31,23 @@ public class FolderAdapter extends ArrayAdapter<String> {
 
     private int iconResource1;
     private int iconResource2;
+    private boolean isCancelButtonVisible = false;
+    private FileSender.FileTransferCallback currentCallback;
+    private boolean isTransferCancelled = false; // Flag variable to indicate if transfer is cancelled
 
     public FolderAdapter(Context context, List<String> items, int iconResource1, int iconResource2) {
         super(context, 0, items);
         this.iconResource1 = iconResource1;
         this.iconResource2 = iconResource2;
+    }
+
+    private void toggleCancelButtonVisibility(ImageButton cancelButton) {
+        if (isCancelButtonVisible) {
+            cancelButton.setVisibility(View.GONE);
+        } else {
+            cancelButton.setVisibility(View.VISIBLE);
+        }
+        isCancelButtonVisible = !isCancelButtonVisible;
     }
 
     @NonNull
@@ -59,6 +71,23 @@ public class FolderAdapter extends ArrayAdapter<String> {
 
         ImageButton syncImage = view.findViewById(R.id.sync_btn);
         syncImage.setImageResource(iconResource2);
+        ImageButton cancelButton = view.findViewById(R.id.cancel_btn);
+//        cancelButton.setOnClickListener(view1 -> {
+//            // Cancel button click event
+//            // Cancel the file transfer
+//            FileSender.cancelTransfer();
+//
+//            // Toggle the visibility of the cancel button
+//            toggleCancelButtonVisibility(cancelButton);
+//        });
+        // Set click listener for the cancel button
+        cancelButton.setOnClickListener(view1 -> {
+            // Set the flag to indicate transfer cancellation
+            isTransferCancelled = true;
+
+            // Toggle the visibility of the cancel button
+            toggleCancelButtonVisibility(cancelButton);
+        });
 
         syncImage.setOnClickListener(view1 -> {
             Log.d("WifiDeviceScanner", "STARTED CLICK METHOD");
@@ -91,8 +120,7 @@ public class FolderAdapter extends ArrayAdapter<String> {
                     Toast.makeText(getContext(), "Selected device: " + selectedDeviceName, Toast.LENGTH_SHORT).show();
                     Toast.makeText(getContext(), "Selected device IP: " + selectedDeviceIP, Toast.LENGTH_SHORT).show();
                     try {
-                        Log.d("WifiDeviceScanner", "BEFORE FILE PATH");
-
+                        toggleCancelButtonVisibility(cancelButton);
                         // Get the directory where your app can store files
 //                        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
 //                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Career/";
@@ -110,10 +138,15 @@ public class FolderAdapter extends ArrayAdapter<String> {
 
                         Log.d("FileSelected", finalPath);
                         for (File fileName : files) {
+                            Log.d("Cancel variable", String.valueOf(isTransferCancelled));
+                            if (isTransferCancelled) {
+                                Log.d("Cancel loop", "CANCEL THE TRANSFER");
+                                break; // Break the loop if transfer is cancelled
+                            }
                             File fileToSend = new File(finalPath, fileName.getName());
                             Log.d("FileSelected", String.valueOf(fileToSend));
                             Log.d("WifiDeviceScanner", "BEFORE SENDING FILE");
-                            FileSender.FileTransferCallback callback = new FileSender.FileTransferCallback() {
+                            currentCallback = new FileSender.FileTransferCallback() {
                                 @Override
                                 public void onSuccess() {
                                     // File transfer successful
@@ -153,14 +186,16 @@ public class FolderAdapter extends ArrayAdapter<String> {
 
                                 @Override
                                 public void onTransferCancelled() {
-
+                                    Log.d("Cancel btn adapter", "CAME INSIDE");
+                                    isTransferCancelled = true; // Set the flag to indicate transfer cancellation
+//                                    FileSender.cancelTransfer();
+//                                    toggleCancelButtonVisibility(cancelButton);
+                                    Log.d("Cancel btn adapter", "EXECUTED");
                                 }
                             };
 
                             // Call the handleFileTransfer method and pass the file path
-                            FileSender.sendFile(selectedDeviceIP,fileToSend,callback);
-//                            fileSenderActivity.handleFileTransfer(Uri.fromFile(fileToSend), selectedDeviceIP);
-                            Log.d("WifiDeviceScanner", "AFTER SENDING FILE");
+                            FileSender.sendFile(selectedDeviceIP, fileToSend, currentCallback);
                         }
 
                     } catch (Exception e) {
