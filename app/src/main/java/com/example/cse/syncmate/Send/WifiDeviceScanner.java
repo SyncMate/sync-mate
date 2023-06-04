@@ -102,7 +102,7 @@ public class WifiDeviceScanner extends AppCompatActivity {
                                 Log.d("WifiDeviceScanner i VALUE", String.valueOf(finalI));
                                 InetAddress inetAddress = InetAddress.getByName(address);
                                 Log.d("WifiDeviceScanner INETADDRESS", "PASSED INETADDRESS INITIALIZATION");
-                                if (inetAddress.isReachable(200)) {
+                                if (inetAddress.isReachable(250)) {
                                     List<String> innerListDevice = new ArrayList<>();
                                     Log.d("WifiDeviceScanner", "INSIDE ISREACHABLE");
 
