@@ -79,7 +79,7 @@ public class FileListActivity extends AppCompatActivity {
         return folderList;
     }
 
-    private void openFileChooser(){
+    private void openFileChooser() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -133,7 +133,7 @@ public class FileListActivity extends AppCompatActivity {
             return;
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COPY_FILES) {
-            File createdFolder = new File (SYNCMATE_FOLDER_PATH, fileName);
+            File createdFolder = new File(SYNCMATE_FOLDER_PATH, fileName);
             if (data.getClipData() != null) {
                 for (int i = 0; i < data.getClipData().getItemCount(); i++) {
                     Uri uri = data.getClipData().getItemAt(i).getUri();

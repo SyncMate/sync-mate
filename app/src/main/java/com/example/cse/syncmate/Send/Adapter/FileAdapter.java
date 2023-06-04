@@ -2,7 +2,6 @@ package com.example.cse.syncmate.Send.Adapter;
 
 import android.content.Context;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import androidx.annotation.Nullable;
 
 import com.example.cse.syncmate.R;
 
-import java.io.File;
 import java.util.List;
 
 public class FileAdapter extends ArrayAdapter<String> {

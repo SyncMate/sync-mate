@@ -14,13 +14,11 @@ import java.util.Random;
 
 public class FileSender {
 
-    private static final int BUFFER_SIZE = 1024;
-    private static final int TIMEOUT = 5000; // Timeout in milliseconds
     private static int receiver = 1024;
-    private static boolean isTransferPaused = false; // Flag to indicate if the transfer is paused
-    private static volatile boolean isTransferCancelled = false;
-
+    private static final int BUFFER_SIZE = 1024;
     public static int receiverPort = 1024;
+    private static boolean isTransferPaused = false;
+    private static volatile boolean isTransferCancelled = false;
 
     public interface FileTransferCallback {
         void onSuccess();
@@ -86,9 +84,7 @@ public class FileSender {
                     }
                     bos.write(buffer, 0, bytesRead);
                 }
-//                        if (callback != null) {
-//                            callback.onTransferCancelled();
-//                        }
+
                 // Flush and close the output stream
                 bos.flush();
                 bos.close();
@@ -157,5 +153,3 @@ public class FileSender {
 
 }
 
-// TODO - SEND AND RECEIVE LOCATION - INTERNAL STORAGE/SYNCMATE/<SELECTED FOLDER>
-// TODO - SEND RECEIVER'S LISTENING PORT TO FILE SENDER

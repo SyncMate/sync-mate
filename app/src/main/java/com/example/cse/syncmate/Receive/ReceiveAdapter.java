@@ -16,7 +16,6 @@ import java.util.List;
 public class ReceiveAdapter extends RecyclerView.Adapter<ReceiveAdapter.ViewHolder> {
 
     private List<String> receivedFiles;
-    private String name;
     public ReceiveAdapter(List<String> receivedFiles) {
         this.receivedFiles = receivedFiles;
     }

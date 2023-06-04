@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.cse.syncmate.Send.FileSender;
 
@@ -27,7 +26,6 @@ public class FileReceiver {
     static List<String> receivedFilesToPass = new ArrayList<>();
     static String name = "";
     private static Context context;
-    private ReceiveFragment receiveFragment;
 
     public FileReceiver(Context context) {
         this.context = context;
@@ -35,16 +33,13 @@ public class FileReceiver {
 
     public static void main(String[] args) {
 
-        Log.d("File Receive", "CAME INTO MAIN CODE");
         int port = findAvailablePort();
-        Log.d("File Receive", "SCANNED AVAILABLE PORTS");
         if (port == -1) {
             System.out.println("No available ports found. Exiting...");
             return;
         }
 
         try {
-            Log.d("FileReceiver", "BEFORE GET SERVER SOCKET");
 
             // Create a server socket and bind it to the selected port
             ServerSocket serverSocket = new ServerSocket(port);
@@ -56,7 +51,6 @@ public class FileReceiver {
 
             // Accept incoming connections indefinitely
             while (true) {
-                Log.d("FileReceiver WHILE LOOP", "CAME INSIDE WHILE LOOP");
 
                 // Accept the connection from the sender
                 Socket socket = serverSocket.accept();
@@ -74,7 +68,7 @@ public class FileReceiver {
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
 
         // Specify the directory path to save the received files
-        String saveDirectory = "/storage/emulated/0/Download/SyncMate/"; //TODO - Replace with the desired file path
+        String saveDirectory = "/storage/emulated/0/Download/SyncMate/";
         File directory = new File(saveDirectory);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -124,8 +118,6 @@ public class FileReceiver {
                 File existingFile = new File(saveFilePath);
                 if (!existingFile.exists()) {
                     FileOutputStream fos = new FileOutputStream(saveFilePath);
-                    Log.d("FileReceiver FOS", fos.toString());
-
 
                     // Read the file data from the socket and save it
                     byte[] buffer = new byte[1024];
@@ -138,7 +130,6 @@ public class FileReceiver {
                     Log.d("Received file name", selectedFileName);
                     receivedFiles.add(selectedFileName);
                     // Call the receiveFile() method to update the UI with the received file name
-
                     new Handler(Looper.getMainLooper()).post(() -> receiveFile(selectedFileName));
                     // Read a single byte as a signal
                     int signal = bis.read();
@@ -156,12 +147,6 @@ public class FileReceiver {
 
             InetAddress senderAddress = socket.getInetAddress();
             String senderIP = senderAddress.getHostAddress();
-//            Log.d("Received file sender", senderIP);
-
-//            String senderDeviceName = senderAddress.getHostName();
-//            Log.d("Received file sender", senderDeviceName);
-//            Toast.makeText(context, senderDeviceName + "is sending files", Toast.LENGTH_SHORT).show();
-//            new Handler(Looper.getMainLooper()).post(() -> getName(senderDeviceName));
 
             Log.d("CHECK RECEIVER FOLDER", String.valueOf(isContain));
             while (isContain == false) {
@@ -244,8 +229,4 @@ public class FileReceiver {
         ReceiveFragment.updateReceivedFiles(receivedFilesToPass);
     }
 
-    private static void getName(String senderName){
-        name = senderName;
-        ReceiveFragment.senderDeviceNameReceived(name);
-    }
 }
